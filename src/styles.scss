@@ -1,1 +1,51 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global design tokens and typography */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+:root {
+	--color-primary: #0B486B; /* para títulos, botones y destacados */
+	--color-secondary: #3B8686; /* acento secundario */
+	--color-accent: #79BD9A;
+	--bg-1: #A8DBA8; /* sección fondo claro */
+	--bg-2: #CFF09E; /* sección fondo claro */
+	--surface: #ffffff; /* tarjetas, superficies */
+	--muted: #6b7280;
+	--radius-lg: 12px;
+	--shadow-soft: 0 8px 24px rgba(11,72,107,0.06);
+	--container-width: 1100px;
+	--sep-1: #f5f5f5; /* separadores y fondos muy claros */
+	--sep-2: #e0e0e0; /* línea y límites */
+	--section-padding: 3rem;
+}
+
+*{ box-sizing: border-box }
+html,body{ height:100%; margin:0 }
+body{
+	font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+	color: #06343a;
+	background: var(--sep-1); /* fondo general claro */
+	-webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+	line-height:1.45; font-weight:400;
+}
+
+.container{ max-width:var(--container-width); margin:0 auto; padding:0 1rem }
+
+h1,h2,h3,h4{ margin:0; color: #06343a }
+h1{ font-size:2rem; font-weight:800 }
+h2{ font-size:1.5rem; font-weight:700 }
+h3{ font-size:1.25rem; font-weight:700 }
+p{ margin:0 0 0.5rem }
+
+.card{ background:var(--surface); border-radius:var(--radius-lg); box-shadow:var(--shadow-soft); padding:1rem }
+
+/* Section helpers */
+.section { padding: var(--section-padding) 0 }
+.section--green { background: linear-gradient(180deg, var(--bg-2), var(--bg-1)); }
+.section--light { background: #ffffff }
+.section--muted { background: var(--sep-1) }
+
+/* subtle separators */
+.divider-thin { height:1px; background:var(--sep-2); width:100% }
+
+.btn{ display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border:0; cursor:pointer; border-radius:10px; padding:.55rem .9rem; font-weight:700 }
+.btn.primary{ background:var(--color-primary); color:white }
+.btn.ghost{ background:transparent; color:white; border:1px solid rgba(255,255,255,0.12) }
