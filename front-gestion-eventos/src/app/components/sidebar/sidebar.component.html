@@ -1,0 +1,67 @@
+<nav class="sidebar" [class.closed]="!isSidebarOpen">
+  <!-- Encabezado con logo y botón hamburguesa -->
+  <div class="sidebar-header">
+    <h2 class="logo">SGE</h2>
+    <button class="hamburger" (click)="toggleSidebar()">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+
+  <ul>
+    <!-- Gestión del evento -->
+    <li class="menu-item">
+      <div class="menu-link" (click)="toggleEventManagement()">
+        <mat-icon>event</mat-icon>
+        <span>Gestión del evento</span>
+        <mat-icon class="arrow" [class.open]="isEventManagementOpen">expand_more</mat-icon>
+      </div>
+
+      <ul *ngIf="isEventManagementOpen" class="submenu">
+        <li><a routerLink="/eventos"><mat-icon>calendar_today</mat-icon>Eventos</a></li>
+        <li><a routerLink="/actividades"><mat-icon>view_agenda</mat-icon>Actividades</a></li>
+        <li><a routerLink="/conferencistas"><mat-icon>record_voice_over</mat-icon>Conferencistas</a></li>
+      </ul>
+    </li>
+
+    <!-- Gestión de personas -->
+    <li class="menu-item">
+      <div class="menu-link" (click)="togglePeopleManagement()">
+        <mat-icon>groups</mat-icon>
+        <span>Gestión de personas</span>
+        <mat-icon class="arrow" [class.open]="isPeopleManagementOpen">expand_more</mat-icon>
+      </div>
+
+      <ul *ngIf="isPeopleManagementOpen" class="submenu">
+        <li><a routerLink="/participantes"><mat-icon>person</mat-icon>Participantes</a></li>
+        <li><a routerLink="/usuarios"><mat-icon>admin_panel_settings</mat-icon>Usuarios</a></li>
+      </ul>
+    </li>
+
+    <!-- Operaciones -->
+    <li class="menu-item">
+      <div class="menu-link" (click)="toggleOperations()">
+        <mat-icon>build</mat-icon>
+        <span>Operaciones</span>
+        <mat-icon class="arrow" [class.open]="isOperationsOpen">expand_more</mat-icon>
+      </div>
+
+      <ul *ngIf="isOperationsOpen" class="submenu">
+        <li><a routerLink="/inscripciones"><mat-icon>assignment</mat-icon>Inscripciones</a></li>
+        <li><a routerLink="/certificados"><mat-icon>workspace_premium</mat-icon>Certificados</a></li>
+      </ul>
+    </li>
+
+    <!-- Sistema -->
+    <li class="menu-item">
+      <div class="menu-link" (click)="toggleSystem()">
+        <mat-icon>settings</mat-icon>
+        <span>Sistema</span>
+        <mat-icon class="arrow" [class.open]="isSystemOpen">expand_more</mat-icon>
+      </div>
+
+      <ul *ngIf="isSystemOpen" class="submenu">
+        <li><a routerLink="/configuracion"><mat-icon>tune</mat-icon>Configuración</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
