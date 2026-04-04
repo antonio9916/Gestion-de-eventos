@@ -1,12 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { routes } from './app.routes';
-import { SidebarComponent } from './components/sidebar/sidebar.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterModule, SidebarComponent],
+  imports: [RouterModule],
   templateUrl: './app.html',
   styleUrls: ['./app.scss'],
 })
