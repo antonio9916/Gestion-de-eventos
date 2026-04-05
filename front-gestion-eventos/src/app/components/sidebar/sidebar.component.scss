@@ -1,0 +1,122 @@
+.sidebar {
+  width: 290px;
+  height: 100vh;
+  background: #ffffff;
+  padding: 20px 15px;
+  border-right: 1px solid #e0e0e0;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.05);
+  font-family: 'Segoe UI', sans-serif;
+  transition: width 0.3s ease;
+
+  &.closed {
+    width: 140px; // ancho mínimo dejando visible el logo
+    ul {
+      li .menu-link span {
+        display: none; // ocultar texto de menú
+      }
+      li .submenu {
+        display: none; // ocultar submenús
+      }
+    }
+  }
+}
+
+/* Header con logo y hamburguesa */
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+
+  .logo {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #0B486B;
+  }
+
+  .hamburger {
+    background: none;
+    border: none;
+    cursor: pointer;
+    mat-icon {
+      font-size: 28px;
+      color: #0B486B;
+    }
+  }
+}
+
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.menu-item {
+  margin-bottom: 10px;
+}
+
+.menu-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  color: #0B486B;
+  font-weight: 600;
+  transition: all 0.2s ease;
+
+  mat-icon:first-child {
+    margin-right: 8px;
+  }
+
+  span {
+    flex: 1;
+  }
+
+  &:hover {
+    background-color: #F5F7FA;
+  }
+}
+
+.arrow {
+  transition: transform 0.2s ease;
+}
+
+.arrow.open {
+  transform: rotate(180deg);
+}
+
+.submenu {
+  margin-top: 5px;
+  padding-left: 10px;
+
+  li a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 10px;
+    border-radius: 6px;
+    color: #3B8686;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+
+    mat-icon {
+      font-size: 18px;
+    }
+
+    &:hover {
+      background-color: #EAF7F5;
+      color: #0B486B;
+    }
+  }
+}
+
+/* Responsive: ocultar completamente sidebar en pantallas muy chicas */
+@media (max-width: 768px) {
+  .sidebar {
+    display: none;
+  }
+}

@@ -1,0 +1,18 @@
+<app-header></app-header>
+
+<div class="app-layout">
+  <app-sidebar></app-sidebar>
+
+  <main class="container main-content">
+    <app-hero></app-hero>
+
+    <section id="events" class="events">
+      <h3>Próximos eventos</h3>
+      <app-event-list [events]="events"></app-event-list>
+    </section>
+
+    <app-features></app-features>
+  </main>
+</div>
+
+<app-footer></app-footer>

@@ -1,0 +1,208 @@
+.login-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+  background-image: url('../../assets/images/fondo.jpg') ;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.login-page::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: rgba(121, 189, 154, 0.35);
+  backdrop-filter: blur(4px);
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  background: rgba(255, 255, 255, 0.96);
+  border-radius: 1.2rem;
+  box-shadow: 0 20px 40px rgba(11, 72, 107, 0.15);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 480px;
+  background: #ffffff;
+  border-radius: 1.2rem;
+  box-shadow: 0 20px 40px rgba(11, 72, 107, 0.15);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.login-header h1 {
+  margin: 0 0 0.3rem;
+  font-size: 1.9rem;
+  color: #0B486B;
+  font-weight: 800;
+}
+
+.login-header p {
+  margin: 0;
+  color: #3B8686;
+  font-size: 0.95rem;
+}
+
+.login-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+button {
+  border: none;
+  border-radius: 0.7rem;
+  padding: 0.8rem 1.2rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Botón principal */
+button.primary {
+  background: #3B8686;
+  color: white;
+  font-weight: 600;
+}
+
+button.primary:hover {
+  background: #0B486B;
+  transform: translateY(-1px);
+}
+
+/* Botón secundario */
+button.secondary {
+  background: #F5F7FA;
+  color: #0B486B;
+  border: 1px solid #e0e0e0;
+}
+
+button.secondary:hover {
+  background: #EAF7F5;
+}
+
+/* Formulario */
+.login-form {
+  display: grid;
+  gap: 1rem;
+}
+
+.login-form label {
+  display: grid;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: #0B486B;
+  font-weight: 500;
+}
+
+/* Inputs */
+.login-form input,
+.login-form select {
+  width: 100%;
+  border: 1px solid #dcdcdc;
+  border-radius: 0.7rem;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.9rem;
+  background: #F9FBFC;
+  transition: all 0.2s ease;
+}
+
+/* Focus elegante */
+.login-form input:focus,
+.login-form select:focus {
+  outline: none;
+  border-color: #79BD9A;
+  box-shadow: 0 0 0 2px rgba(121, 189, 154, 0.2);
+  background: #ffffff;
+}
+
+/* Mensajes */
+.messages {
+  min-height: 1.5rem;
+}
+
+.success {
+  margin: 0;
+  color: #2E7D32;
+  font-size: 0.85rem;
+}
+
+.error {
+  margin: 0;
+  color: #C62828;
+  font-size: 0.85rem;
+}
+
+/* Lista usuarios */
+.users-list {
+  padding-top: 1rem;
+  border-top: 1px solid #eaeaea;
+}
+
+.users-list h2 {
+  margin: 0 0 0.8rem;
+  font-size: 0.95rem;
+  color: #0B486B;
+}
+
+.user-item {
+  background: #F5F7FA;
+  border-radius: 0.7rem;
+  padding: 0.8rem;
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+  color: #3B8686;
+}
+
+.user-item p {
+  margin: 0.2rem 0;
+}
+.form-link {
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  text-align: center;
+  color: #3B8686;
+
+  span {
+    color: #0B486B;
+    font-weight: 600;
+    cursor: pointer;
+    margin-left: 4px;
+    transition: all 0.2s ease;
+  }
+
+  span:hover {
+    text-decoration: underline;
+  }
+}
+
+/* Link de volver */
+.form-link.back {
+  cursor: pointer;
+  color: #0B486B;
+  font-weight: 500;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.form-link.back:hover {
+  color: #3B8686;
+  transform: translateX(-2px);
+}

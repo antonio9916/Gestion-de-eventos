@@ -1,0 +1,64 @@
+<section class="login-page">
+  <div class="login-card">
+    <div class="login-header">
+      <h1>Bienvenido a SGE</h1>
+      <p>Inicia sesión o crea un usuario para continuar.</p>
+    </div>
+
+    <!-- LOGIN -->
+    <form *ngIf="!showRegister" [formGroup]="loginForm" (ngSubmit)="login()" class="login-form">
+      <label>
+        Usuario
+        <input type="text" formControlName="username" placeholder="Nombre de usuario" />
+      </label>
+      <label>
+        Contraseña
+        <input type="password" formControlName="password" placeholder="Contraseña" />
+      </label>
+
+      <button type="submit" class="primary">Iniciar sesión</button>
+
+      <!-- LINK CREAR CUENTA -->
+      <p class="form-link">
+        ¿Aún no tienes cuenta?
+        <span (click)="toggleRegister()">Crear cuenta</span>
+      </p>
+    </form>
+
+    <!-- REGISTER -->
+    <form *ngIf="showRegister" [formGroup]="registerForm" (ngSubmit)="register()" class="login-form">
+      <label>
+        Nombre completo
+        <input type="text" formControlName="name" placeholder="Nombre completo" />
+      </label>
+      <label>
+        Usuario
+        <input type="text" formControlName="username" placeholder="Nombre de usuario" />
+      </label>
+      <label>
+        Correo
+        <input type="email" formControlName="email" placeholder="Correo electrónico" />
+      </label>
+      <label>
+        Contraseña
+        <input type="password" formControlName="password" placeholder="Contraseña" />
+      </label>
+      <label>
+        Repetir contraseña
+        <input type="password" formControlName="confirmPassword" placeholder="Repetir contraseña" />
+      </label>
+
+      <button type="submit" class="primary">Crear usuario</button>
+
+      <!-- VOLVER -->
+      <p class="form-link back" (click)="toggleRegister()">
+        ← Volver a inicio de sesión
+      </p>
+    </form>
+
+    <div class="messages">
+      <p class="success" *ngIf="message">{{ message }}</p>
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </div>
+  </div>
+</section>

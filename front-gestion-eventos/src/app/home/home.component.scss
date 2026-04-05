@@ -1,0 +1,8 @@
+:host{display:block}
+.app-layout{ display:flex; gap:1.5rem; align-items:flex-start; }
+.app-layout app-sidebar{ flex:0 0 280px; }
+.main-content{ max-width:var(--container-width); margin:0 auto; padding: var(--section-padding) 1rem }
+.events h3{ margin:0 0 1rem; color:var(--color-primary) }
+.grid{ display:grid; grid-template-columns: repeat(3,1fr); gap:1rem }
+@media (max-width:1000px){ .grid{ grid-template-columns: repeat(2,1fr) } }
+@media (max-width:700px){ .app-layout{ flex-direction:column; } .app-layout app-sidebar{ flex:1 1 auto; } .grid{ grid-template-columns: 1fr } }

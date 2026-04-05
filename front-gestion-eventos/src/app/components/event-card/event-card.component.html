@@ -1,0 +1,10 @@
+<article class="event-card">
+  <div class="card-body">
+    <h4 class="title">{{ event.name }}</h4>
+    <p class="meta">{{ event.date }} • {{ event.location }}</p>
+    <p class="spots">Cupos: <strong>{{ event.spots }}</strong></p>
+  </div>
+  <div class="card-footer">
+    <button class="btn primary" (click)="enroll()">Inscribirse</button>
+  </div>
+</article>
