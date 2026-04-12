@@ -1,0 +1,176 @@
+<div class="eventos-page">
+  <header class="page-header">
+    <div class="page-header__text">
+      <h1 class="page-header__title">Eventos</h1>
+      <p class="page-header__subtitle">
+        Consulta, filtra y gestiona los eventos del sistema desde un único panel.
+      </p>
+    </div>
+    <button type="button" class="btn btn--primary" (click)="crearEvento()">
+      Crear evento
+    </button>
+  </header>
+
+  <section class="card card--filters" aria-label="Filtros de eventos">
+    <div class="filters-grid">
+      <label class="field">
+        <span class="field__label">Buscar por nombre</span>
+        <input
+          type="search"
+          class="field__input"
+          [(ngModel)]="buscarNombre"
+          placeholder="Ej. conferencia, taller…"
+          autocomplete="off"
+        />
+      </label>
+
+      <label class="field">
+        <span class="field__label">Tipo de evento</span>
+        <select class="field__input field__select" [(ngModel)]="tipoSeleccionado">
+          <option value="">Todos los tipos</option>
+          <option *ngFor="let t of tiposEvento" [value]="t">{{ t }}</option>
+        </select>
+      </label>
+
+      <label class="field">
+        <span class="field__label">Estado</span>
+        <select class="field__input field__select" [(ngModel)]="estadoFiltro">
+          <option *ngFor="let s of estadosFiltro" [value]="s">{{ s }}</option>
+        </select>
+      </label>
+
+      <div class="filters-actions">
+        <button type="button" class="btn btn--secondary" (click)="aplicarFiltros()">
+          Filtrar
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <section class="card card--table" aria-label="Listado de eventos">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th>Lugar</th>
+            <th>Tipo</th>
+            <th class="data-table__num">Cupo</th>
+            <th>Estado</th>
+            <th class="data-table__actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let e of eventosVisibles" class="data-table__row">
+            <td data-label="Nombre"><span class="cell-strong">{{ e.nombre }}</span></td>
+            <td data-label="Fecha">{{ e.fecha }}</td>
+            <td data-label="Lugar">{{ e.lugar }}</td>
+            <td data-label="Tipo"><span class="pill pill--tipo">{{ e.tipo }}</span></td>
+            <td data-label="Cupo" class="data-table__num">{{ e.cupo }}</td>
+            <td data-label="Estado">
+              <span
+                class="badge"
+                [ngClass]="{
+                  'badge--activo': e.estado === 'Activo',
+                  'badge--finalizado': e.estado === 'Finalizado',
+                  'badge--cancelado': e.estado === 'Cancelado'
+                }"
+              >
+                {{ e.estado }}
+              </span>
+            </td>
+            <td data-label="Acciones" class="data-table__actions">
+              <div class="row-actions" role="group" [attr.aria-label]="'Acciones para ' + e.nombre">
+                <button
+                  type="button"
+                  class="action-icon-btn action-icon-btn--view"
+                  (click)="verDetalle(e)"
+                  aria-label="Ver detalle"
+                  title="Ver detalle"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  class="action-icon-btn action-icon-btn--edit"
+                  (click)="editar(e)"
+                  aria-label="Editar"
+                  title="Editar"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  class="action-icon-btn action-icon-btn--delete"
+                  (click)="eliminar(e)"
+                  aria-label="Eliminar"
+                  title="Eliminar"
+                >
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p *ngIf="eventosVisibles.length === 0" class="empty-state">
+      No hay eventos que coincidan con los filtros.
+    </p>
+  </section>
+
+  <ul class="cards-mobile" aria-label="Listado de eventos (vista móvil)">
+    <li *ngFor="let e of eventosVisibles" class="event-card">
+      <div class="event-card__head">
+        <h2 class="event-card__title">{{ e.nombre }}</h2>
+        <span
+          class="badge"
+          [ngClass]="{
+            'badge--activo': e.estado === 'Activo',
+            'badge--finalizado': e.estado === 'Finalizado',
+            'badge--cancelado': e.estado === 'Cancelado'
+          }"
+        >
+          {{ e.estado }}
+        </span>
+      </div>
+      <dl class="event-card__meta">
+        <div><dt>Fecha</dt><dd>{{ e.fecha }}</dd></div>
+        <div><dt>Lugar</dt><dd>{{ e.lugar }}</dd></div>
+        <div><dt>Tipo</dt><dd><span class="pill pill--tipo">{{ e.tipo }}</span></dd></div>
+        <div><dt>Cupo</dt><dd>{{ e.cupo }}</dd></div>
+      </dl>
+      <div class="event-card__actions" role="group" [attr.aria-label]="'Acciones para ' + e.nombre">
+        <button
+          type="button"
+          class="action-icon-btn action-icon-btn--view"
+          (click)="verDetalle(e)"
+          aria-label="Ver detalle"
+          title="Ver detalle"
+        >
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button
+          type="button"
+          class="action-icon-btn action-icon-btn--edit"
+          (click)="editar(e)"
+          aria-label="Editar"
+          title="Editar"
+        >
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button
+          type="button"
+          class="action-icon-btn action-icon-btn--delete"
+          (click)="eliminar(e)"
+          aria-label="Eliminar"
+          title="Eliminar"
+        >
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+    </li>
+  </ul>
+</div>

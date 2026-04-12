@@ -1,15 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule,MatIconModule],
+  imports: [CommonModule, RouterLink, MatIconModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.scss'],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
+  private readonly router = inject(Router);
+
   isEventManagementOpen = false;
   isPeopleManagementOpen = false;
   isOperationsOpen = false;
@@ -32,7 +36,24 @@ export class SidebarComponent {
   }
   isSidebarOpen = true;
 
-toggleSidebar() {
-  this.isSidebarOpen = !this.isSidebarOpen;
-}
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
+  ngOnInit(): void {
+    const syncEventSection = (url: string): void => {
+      if (
+        url.includes('/eventos') ||
+        url.includes('/actividades') ||
+        url.includes('/conferencistas')
+      ) {
+        this.isEventManagementOpen = true;
+      }
+    };
+
+    syncEventSection(this.router.url);
+    this.router.events
+      .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
+      .subscribe((e) => syncEventSection(e.urlAfterRedirects));
+  }
 }

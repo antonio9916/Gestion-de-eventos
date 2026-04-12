@@ -5,12 +5,10 @@ import { HeroComponent } from '../components/hero/hero.component';
 import { FeaturesComponent } from '../components/features/features.component';
 import { FooterComponent } from '../components/footer/footer.component';
 import { EventListComponent, EventItem } from '../components/event-list/event-list.component';
-import { SidebarComponent } from '../components/sidebar/sidebar.component';
-
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, HeaderComponent, HeroComponent, EventListComponent, FeaturesComponent, FooterComponent, SidebarComponent],
+  imports: [CommonModule, HeaderComponent, HeroComponent, EventListComponent, FeaturesComponent, FooterComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
