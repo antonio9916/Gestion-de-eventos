@@ -1,0 +1,160 @@
+<div class="event-form-container">
+  <div class="event-form-card">
+    <!-- Header -->
+    <div class="form-header">
+      <h1 class="form-title">{{ pageTitle }}</h1>
+      <p class="form-subtitle">
+        @if (isEditMode) {
+          Actualiza los detalles del evento
+        } @else {
+          Completa los datos para crear un nuevo evento
+        }
+      </p>
+    </div>
+
+    <!-- Form -->
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-content">
+      <!-- Fila 1: Título y Tipo de evento -->
+      <div class="form-row">
+        <div class="form-group">
+          <label for="title" class="form-label">Título *</label>
+          <input
+            id="title"
+            type="text"
+            formControlName="title"
+            class="form-input"
+            [class.input-error]="hasFieldError('title')"
+            placeholder="Ej: Conferencia de Angular"
+          />
+          @if (hasFieldError('title')) {
+            <span class="error-message">{{ getFieldError('title') }}</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="eventType" class="form-label">Tipo de evento *</label>
+          <select
+            id="eventType"
+            formControlName="eventType"
+            class="form-select"
+            [class.select-error]="hasFieldError('eventType')"
+          >
+            <option value="" disabled>Selecciona un tipo</option>
+            @for (type of eventTypes; track type.value) {
+              <option [value]="type.value">{{ type.label }}</option>
+            }
+          </select>
+          @if (hasFieldError('eventType')) {
+            <span class="error-message">{{ getFieldError('eventType') }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Fila 2: Fecha inicio, Fecha fin y Cupo máximo -->
+      <div class="form-row form-row--three">
+        <div class="form-group">
+          <label for="startDate" class="form-label">Fecha inicio *</label>
+          <input
+            id="startDate"
+            type="datetime-local"
+            formControlName="startDate"
+            class="form-input"
+            [class.input-error]="hasFieldError('startDate')"
+          />
+          @if (hasFieldError('startDate')) {
+            <span class="error-message">{{ getFieldError('startDate') }}</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="endDate" class="form-label">Fecha fin *</label>
+          <input
+            id="endDate"
+            type="datetime-local"
+            formControlName="endDate"
+            class="form-input"
+            [class.input-error]="hasFieldError('endDate')"
+          />
+          @if (hasFieldError('endDate')) {
+            <span class="error-message">{{ getFieldError('endDate') }}</span>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="maxAttendees" class="form-label">Cupo máximo *</label>
+          <input
+            id="maxAttendees"
+            type="number"
+            formControlName="maxAttendees"
+            class="form-input"
+            [class.input-error]="hasFieldError('maxAttendees')"
+            placeholder="Ej: 100"
+            min="1"
+          />
+          @if (hasFieldError('maxAttendees')) {
+            <span class="error-message">{{ getFieldError('maxAttendees') }}</span>
+          }
+        </div>
+      </div>
+
+      <!-- Fila 3: Descripción -->
+      <div class="form-group">
+        <label for="description" class="form-label">Descripción *</label>
+        <textarea
+          id="description"
+          formControlName="description"
+          class="form-textarea"
+          [class.textarea-error]="hasFieldError('description')"
+          placeholder="Describe el evento en detalle..."
+          rows="3"
+        ></textarea>
+        @if (hasFieldError('description')) {
+          <span class="error-message">{{ getFieldError('description') }}</span>
+        }
+      </div>
+
+      <!-- Fila 4: Política de inscripción -->
+      <div class="form-group">
+        <label for="inscriptionPolicy" class="form-label"
+          >Política de inscripción *</label
+        >
+        <textarea
+          id="inscriptionPolicy"
+          formControlName="inscriptionPolicy"
+          class="form-textarea"
+          [class.textarea-error]="hasFieldError('inscriptionPolicy')"
+          placeholder="Describe las reglas y requisitos para la inscripción..."
+          rows="3"
+        ></textarea>
+        @if (hasFieldError('inscriptionPolicy')) {
+          <span class="error-message">{{
+            getFieldError('inscriptionPolicy')
+          }}</span>
+        }
+      </div>
+
+      <!-- Botones -->
+      <div class="form-actions">
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="!form.valid || isSubmitting"
+        >
+          @if (isSubmitting) {
+            <span class="btn-loading">Procesando...</span>
+          } @else {
+            {{ submitButtonText }}
+          }
+        </button>
+        <button
+          type="button"
+          class="btn btn-secondary"
+          (click)="onCancel()"
+          [disabled]="isSubmitting"
+        >
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

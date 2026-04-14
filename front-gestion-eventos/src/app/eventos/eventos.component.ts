@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { MatIconModule } from '@angular/material/icon';
 
@@ -23,6 +24,8 @@ export interface EventoListItem {
   styleUrls: ['./eventos.component.scss'],
 })
 export class EventosComponent {
+  private readonly router = inject(Router);
+
   readonly tiposEvento = ['Conferencia', 'Taller', 'Networking', 'Feria', 'Webinar'] as const;
 
   readonly estadosFiltro = ['Todos', 'Activo', 'Finalizado', 'Cancelado'] as const;
@@ -104,15 +107,15 @@ export class EventosComponent {
   }
 
   crearEvento(): void {
-    window.alert('Crear evento (demo sin backend).');
+    void this.router.navigate(['/eventos/crear/nuevo']);
   }
 
   verDetalle(evento: EventoListItem): void {
-    window.alert(`Detalle: ${evento.nombre} (#${evento.id})`);
+    void this.router.navigate(['/eventos', evento.id]);
   }
 
   editar(evento: EventoListItem): void {
-    window.alert(`Editar: ${evento.nombre}`);
+    void this.router.navigate(['/eventos/editar', evento.id]);
   }
 
   eliminar(evento: EventoListItem): void {

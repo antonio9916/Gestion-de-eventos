@@ -1,0 +1,127 @@
+<div class="detalle" *ngIf="evento as ev">
+  <nav class="detalle__nav" aria-label="Navegación secundaria">
+    <a routerLink="/eventos" class="detalle__back">← Volver a eventos</a>
+  </nav>
+
+  <article class="card card--hero">
+    <div class="hero__top">
+      <div class="hero__titles">
+        <h1 class="hero__title">{{ ev.nombre }}</h1>
+        <span
+          class="badge"
+          [ngClass]="{
+            'badge--activo': ev.estado === 'Activo',
+            'badge--finalizado': ev.estado === 'Finalizado',
+            'badge--cancelado': ev.estado === 'Cancelado'
+          }"
+        >
+          {{ ev.estado }}
+        </span>
+      </div>
+      <div class="hero__actions">
+        <button type="button" class="btn btn--secondary" (click)="editarEvento()">Editar</button>
+        <button type="button" class="btn btn--danger" (click)="eliminarEvento()">Eliminar</button>
+      </div>
+    </div>
+
+    <dl class="hero__meta">
+      <div class="meta-item">
+        <dt>Fecha</dt>
+        <dd>{{ ev.fecha }}</dd>
+      </div>
+      <div class="meta-item">
+        <dt>Lugar</dt>
+        <dd>{{ ev.lugar }}</dd>
+      </div>
+      <div class="meta-item">
+        <dt>Tipo</dt>
+        <dd><span class="pill">{{ ev.tipo }}</span></dd>
+      </div>
+      <div class="meta-item">
+        <dt>Cupo</dt>
+        <dd class="meta-item__cupo">{{ ev.inscritos }} / {{ ev.cupoMax }}</dd>
+      </div>
+    </dl>
+  </article>
+
+  <section class="card card--section" aria-labelledby="actividades-heading">
+    <div class="section-head">
+      <h2 id="actividades-heading" class="section-head__title">Actividades</h2>
+      <button type="button" class="btn btn--primary" (click)="agregarActividad()">
+        Agregar actividad
+      </button>
+    </div>
+
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Horario</th>
+            <th>Conferencista</th>
+            <th>Estado</th>
+            <th class="data-table__actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of ev.actividades" class="data-table__row">
+            <td data-label="Nombre"><span class="cell-strong">{{ a.nombre }}</span></td>
+            <td data-label="Horario">{{ a.horario }}</td>
+            <td data-label="Conferencista">{{ a.conferencista }}</td>
+            <td data-label="Estado">
+              <span
+                class="badge badge--sm"
+                [ngClass]="{
+                  'badge--activo': a.estado === 'Activo',
+                  'badge--finalizado': a.estado === 'Finalizado',
+                  'badge--cancelado': a.estado === 'Cancelado'
+                }"
+              >
+                {{ a.estado }}
+              </span>
+            </td>
+            <td data-label="Acciones" class="data-table__actions">
+              <div class="row-actions" role="group" [attr.aria-label]="'Acciones para ' + a.nombre">
+                <button
+                  type="button"
+                  class="action-icon-btn action-icon-btn--edit"
+                  (click)="editarActividad(a)"
+                  aria-label="Editar"
+                  title="Editar"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  type="button"
+                  class="action-icon-btn action-icon-btn--delete"
+                  (click)="eliminarActividad(a)"
+                  aria-label="Eliminar"
+                  title="Eliminar"
+                >
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p *ngIf="ev.actividades.length === 0" class="empty-hint">No hay actividades registradas.</p>
+  </section>
+
+  <section class="card card--section" aria-labelledby="participantes-heading">
+    <h2 id="participantes-heading" class="section-head__title section-head__title--solo">
+      Participantes
+    </h2>
+
+    <ul class="participantes" *ngIf="ev.participantes.length > 0">
+      <li *ngFor="let p of ev.participantes" class="participantes__row">
+        <span class="participantes__name">{{ p.nombre }}</span>
+        <span class="participantes__mail">{{ p.correo }}</span>
+      </li>
+    </ul>
+
+    <p *ngIf="ev.participantes.length === 0" class="empty-hint">No hay participantes inscritos.</p>
+  </section>
+</div>
