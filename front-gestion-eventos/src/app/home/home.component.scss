@@ -2,14 +2,18 @@
   display: block;
 }
 
+app-footer {
+  display: none;
+}
+
 .main-content {
   max-width: var(--container-width);
   margin: 0 auto;
-  padding: var(--section-padding) 1rem;
+  //padding: var(--section-padding) 1rem;
 }
 
 .events h3 {
-  margin: 0 0 1rem;
+  margin: 1rem 0 1rem;
   color: var(--color-primary);
 }
 

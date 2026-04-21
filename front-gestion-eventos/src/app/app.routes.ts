@@ -10,12 +10,12 @@ import { EventFormTestComponent } from './components/event-form/event-form-test.
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
   { path: 'login', component: LoginComponent },
-  { path: 'test/event-form', component: EventFormTestComponent },
   {
     path: '',
     component: AppShellComponent,
     children: [
       { path: 'home', component: HomeComponent },
+      { path: 'test/event-form', component: EventFormTestComponent },
       { path: 'eventos', component: EventosComponent },
       { path: 'eventos/:id', component: EventoDetalleComponent },
       { path: 'eventos/crear/nuevo', component: EventFormComponent },

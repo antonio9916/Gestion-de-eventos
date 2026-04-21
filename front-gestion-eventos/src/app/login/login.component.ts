@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthSessionService } from '../auth/auth-session.service';
 
 export interface UserAccount {
   name: string;
@@ -52,6 +53,7 @@ export class LoginComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private readonly authSession = inject(AuthSessionService);
 
   loginForm = this.fb.group({
     username: ['', Validators.required],
@@ -90,6 +92,12 @@ export class LoginComponent {
       this.errorMessage = 'Usuario o contraseña incorrectos.';
       return;
     }
+
+    this.authSession.saveAuthenticatedUser({
+      username: user.username,
+      role: user.role,
+      name: user.name,
+    });
 
     this.router.navigate(['/home']);
   }

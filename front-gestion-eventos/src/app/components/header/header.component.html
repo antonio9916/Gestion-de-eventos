@@ -5,8 +5,8 @@
     </div>
 
     <div class="user-info">
-      <span class="username">Juan Pérez</span>
-      <button class="logout-button">Cerrar Sesión</button>
+      <span class="username">{{ displayName }}</span>
+      <button type="button" class="logout-button" (click)="logout()">Cerrar sesión</button>
     </div>
   </div>
 </header>
