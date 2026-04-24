@@ -12,6 +12,8 @@ cryptography==39.0.0
 dill==0.3.6
 Django==5.0.6
 django-allauth==0.63.3
+django-cors-headers==4.9.0
+djangorestframework==3.17.1
 docutils==0.19
 ecdsa==0.18.0
 esptool==4.4
