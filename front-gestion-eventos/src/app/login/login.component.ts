@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { HttpClient } from '@angular/common/http'; // Modificado
 
 export interface UserAccount {
   name: string;
@@ -52,6 +53,7 @@ export class LoginComponent {
 
   private readonly fb = inject(FormBuilder);
   private readonly router = inject(Router);
+  private http = inject(HttpClient);  // Modificado
 
   loginForm = this.fb.group({
     username: ['', Validators.required],
@@ -72,27 +74,36 @@ export class LoginComponent {
 
   roles = ['Administrador', 'Participante', 'Organizador', 'Conferencista'];
 
-  login(): void {
-    this.message = '';
-    this.errorMessage = '';
+ login(): void {    // Modificado el Login completo
+  this.message = '';
+  this.errorMessage = '';
 
-    if (this.loginForm.invalid) {
-      this.errorMessage = 'Por favor completa todos los campos.';
-      return;
-    }
-
-    const { username, password } = this.loginForm.value;
-    const user = this.users.find(
-      (account) => account.username === username && account.password === password
-    );
-
-    if (!user) {
-      this.errorMessage = 'Usuario o contraseña incorrectos.';
-      return;
-    }
-
-    this.router.navigate(['/home']);
+  if (this.loginForm.invalid) {
+    this.errorMessage = 'Por favor completa todos los campos.';
+    return;
   }
+
+  // Obtenemos los datos del formulario
+  const loginData = this.loginForm.value;
+
+  // Hacemos la petición POST a Django
+  this.http.post('http://localhost:8000/api/login/', loginData).subscribe({
+    next: (response: any) => {
+      // Si Django responde con éxito (status 200)
+      console.log('Respuesta del servidor:', response);
+      this.router.navigate(['/home']);
+    },
+    error: (error) => {
+      // Si Django responde con error (status 400, 404, 500, etc.)
+      console.error('Error en el login:', error);
+      if (error.status === 0) {
+        this.errorMessage = 'No se pudo conectar con el servidor. ¿Está encendido Django?';
+      } else {
+        this.errorMessage = error.error.error || 'Usuario o contraseña incorrectos.';
+      }
+    }
+  });
+}
 
   toggleRegister(): void {
     this.showRegister = !this.showRegister;
@@ -100,26 +111,28 @@ export class LoginComponent {
     this.message = '';
   }
 
-  register(): void {
-    this.message = '';
-    this.errorMessage = '';
+  register(): void { // Modificado el registro completo 
+  this.message = '';
+  this.errorMessage = '';
 
-    if (this.registerForm.invalid) {
-      this.errorMessage = 'Por favor completa todos los campos correctamente.';
-      return;
-    }
-
-    const newUser: UserAccount = this.registerForm.value as UserAccount;
-    const exists = this.users.some((account) => account.username === newUser.username || account.email === newUser.email);
-
-    if (exists) {
-      this.errorMessage = 'El nombre de usuario o correo ya existen.';
-      return;
-    }
-
-    this.users.push(newUser);
-    this.message = 'Usuario creado correctamente. Ahora puedes iniciar sesión.';
-    this.registerForm.reset({ role: 'Participante' });
-    this.showRegister = false;
+  if (this.registerForm.invalid) {
+    this.errorMessage = 'Por favor completa todos los campos correctamente.';
+    return;
   }
+
+  const newUser = this.registerForm.value;
+
+  // Enviamos el nuevo usuario a Django
+  this.http.post('http://localhost:8000/api/register/', newUser).subscribe({
+    next: (response: any) => {
+      this.message = 'Usuario creado correctamente en la base de datos. Ahora puedes iniciar sesión.';
+      this.registerForm.reset({ role: 'Participante' });
+      this.showRegister = false;
+    },
+    error: (error) => {
+      console.error('Error en el registro:', error);
+      this.errorMessage = error.error.error || 'Error al registrar el usuario.';
+    }
+  });
+}
 }
