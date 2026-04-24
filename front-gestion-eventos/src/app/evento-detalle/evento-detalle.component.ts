@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { MatIconModule } from '@angular/material/icon';
+import { AuthSessionService } from '../auth/auth-session.service';
+import { EventoInscripcionService } from '../eventos/evento-inscripcion.service';
 export type EventoEstado = 'Activo' | 'Finalizado' | 'Cancelado';
 
 export interface ActividadItem {
@@ -228,6 +230,8 @@ const MOCK_DETALLE: Record<number, EventoDetalle> = {
 })
 export class EventoDetalleComponent implements OnInit, OnDestroy {
   private readonly route = inject(ActivatedRoute);
+  private readonly authSession = inject(AuthSessionService);
+  private readonly inscripcionService = inject(EventoInscripcionService);
   private sub?: Subscription;
 
   evento: EventoDetalle | null = null;
@@ -258,6 +262,23 @@ export class EventoDetalleComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.sub?.unsubscribe();
+  }
+
+  get isParticipante(): boolean {
+    return this.authSession.getRole() === 'participante';
+  }
+
+  get estadoInscripcionUsuario(): string {
+    if (!this.evento || this.evento.estado === 'Cancelado') {
+      return 'Inscripción no disponible';
+    }
+    const username = this.authSession.getCurrentUser()?.username;
+    if (!username) {
+      return 'No autenticado';
+    }
+    return this.inscripcionService.isInscrito(username, this.evento.id)
+      ? 'Ya estás inscrito en este evento'
+      : 'Todavía no estás inscrito en este evento';
   }
 
   editarEvento(): void {

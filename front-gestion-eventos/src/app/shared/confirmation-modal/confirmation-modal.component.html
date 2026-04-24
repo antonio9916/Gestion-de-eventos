@@ -1,0 +1,22 @@
+<div class="modal-overlay" role="dialog" aria-modal="true" [attr.aria-label]="title">
+  <div class="modal-card">
+    <h3 class="modal-title">{{ title }}</h3>
+    <p class="modal-message">{{ message }}</p>
+    <div class="modal-extra">
+      <ng-content />
+    </div>
+    <div class="modal-actions">
+      <button
+        *ngIf="showCancel"
+        type="button"
+        class="btn btn--secondary"
+        (click)="cancel.emit()"
+      >
+        {{ cancelLabel }}
+      </button>
+      <button type="button" class="btn btn--primary" (click)="confirm.emit()">
+        {{ confirmLabel }}
+      </button>
+    </div>
+  </div>
+</div>

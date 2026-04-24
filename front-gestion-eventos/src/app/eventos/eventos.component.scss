@@ -338,6 +338,48 @@
   border-color: rgba(184, 50, 50, 0.45);
 }
 
+.btn-action {
+  border: 1px solid transparent;
+  border-radius: 999px;
+  padding: 0.45rem 0.8rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: filter 0.15s ease;
+}
+
+.btn-action:hover {
+  filter: brightness(1.04);
+}
+
+.btn-action--join {
+  color: #fff;
+  background: linear-gradient(135deg, var(--c-teal), var(--c-mint));
+}
+
+.btn-action--leave {
+  color: #6a1c1c;
+  background: rgba(220, 80, 80, 0.15);
+  border-color: rgba(200, 60, 60, 0.35);
+}
+
+.resumen-card {
+  border-radius: 12px;
+  background: rgba(207, 240, 158, 0.25);
+  border: 1px solid rgba(59, 134, 134, 0.25);
+  padding: 0.75rem 0.85rem;
+  color: #13313d;
+}
+
+.resumen-card p {
+  margin: 0.35rem 0;
+}
+
+.resumen-card__title {
+  margin: 0 0 0.5rem;
+  color: var(--c-deep);
+}
+
 @supports not (background: color-mix(in srgb, red 50%, blue)) {
   .action-icon-btn--view {
     background: rgba(121, 189, 154, 0.2);

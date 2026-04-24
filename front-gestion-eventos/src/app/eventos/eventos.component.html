@@ -6,7 +6,7 @@
         Consulta, filtra y gestiona los eventos del sistema desde un único panel.
       </p>
     </div>
-    <button type="button" class="btn btn--primary" (click)="crearEvento()">
+    <button *ngIf="!isParticipante" type="button" class="btn btn--primary" (click)="crearEvento()">
       Crear evento
     </button>
   </header>
@@ -92,6 +92,23 @@
                   <mat-icon>visibility</mat-icon>
                 </button>
                 <button
+                  *ngIf="puedeInscribirse(e)"
+                  type="button"
+                  class="btn-action btn-action--join"
+                  (click)="solicitarInscripcion(e)"
+                >
+                  Inscribirse
+                </button>
+                <button
+                  *ngIf="puedeDesinscribirse(e)"
+                  type="button"
+                  class="btn-action btn-action--leave"
+                  (click)="solicitarDesinscripcion(e)"
+                >
+                  Desinscribirse
+                </button>
+                <button
+                  *ngIf="!isParticipante"
                   type="button"
                   class="action-icon-btn action-icon-btn--edit"
                   (click)="editar(e)"
@@ -101,6 +118,7 @@
                   <mat-icon>edit</mat-icon>
                 </button>
                 <button
+                  *ngIf="!isParticipante"
                   type="button"
                   class="action-icon-btn action-icon-btn--delete"
                   (click)="eliminar(e)"
@@ -153,6 +171,23 @@
           <mat-icon>visibility</mat-icon>
         </button>
         <button
+          *ngIf="puedeInscribirse(e)"
+          type="button"
+          class="btn-action btn-action--join"
+          (click)="solicitarInscripcion(e)"
+        >
+          Inscribirse
+        </button>
+        <button
+          *ngIf="puedeDesinscribirse(e)"
+          type="button"
+          class="btn-action btn-action--leave"
+          (click)="solicitarDesinscripcion(e)"
+        >
+          Desinscribirse
+        </button>
+        <button
+          *ngIf="!isParticipante"
           type="button"
           class="action-icon-btn action-icon-btn--edit"
           (click)="editar(e)"
@@ -162,6 +197,7 @@
           <mat-icon>edit</mat-icon>
         </button>
         <button
+          *ngIf="!isParticipante"
           type="button"
           class="action-icon-btn action-icon-btn--delete"
           (click)="eliminar(e)"
@@ -173,4 +209,29 @@
       </div>
     </li>
   </ul>
+
+  <app-confirmation-modal
+    *ngIf="confirmOpen"
+    [title]="confirmTitle"
+    [message]="confirmMessage"
+    (confirm)="confirmarAccion()"
+    (cancel)="cerrarConfirmacion()"
+  />
+
+  <app-confirmation-modal
+    *ngIf="successOpen"
+    [title]="successTitle"
+    [message]="successMessage"
+    [confirmLabel]="'Aceptar'"
+    [showCancel]="false"
+    (confirm)="cerrarExito()"
+  >
+    <article *ngIf="successEvento" class="resumen-card">
+      <h4 class="resumen-card__title">Resumen del evento</h4>
+      <p><strong>Título:</strong> {{ successEvento.nombre }}</p>
+      <p><strong>Fecha:</strong> {{ successEvento.fecha }}</p>
+      <p><strong>Lugar:</strong> {{ successEvento.lugar }}</p>
+      <p><strong>Tipo:</strong> {{ successEvento.tipo }}</p>
+    </article>
+  </app-confirmation-modal>
 </div>

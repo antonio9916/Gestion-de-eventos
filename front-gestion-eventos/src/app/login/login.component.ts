@@ -96,6 +96,7 @@ export class LoginComponent {
     this.authSession.saveAuthenticatedUser({
       username: user.username,
       role: user.role,
+      email: user.email,
       name: user.name,
     });
 

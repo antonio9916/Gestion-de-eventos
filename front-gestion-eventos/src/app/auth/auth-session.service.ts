@@ -6,6 +6,7 @@ export type UserRole = 'admin' | 'participante' | 'organizador' | 'conferencista
 export interface AuthenticatedUser {
   username: string;
   role: UserRole;
+  email?: string;
   /** Opcional: útil para saludos o cabeceras sin volver a pedir datos. */
   name?: string;
 }
@@ -31,10 +32,11 @@ export function normalizeRole(displayOrCanonical: string): UserRole {
 
 @Injectable({ providedIn: 'root' })
 export class AuthSessionService {
-  saveAuthenticatedUser(account: { username: string; role: string; name?: string }): void {
+  saveAuthenticatedUser(account: { username: string; role: string; email?: string; name?: string }): void {
     const payload: AuthenticatedUser = {
       username: account.username,
       role: normalizeRole(account.role),
+      ...(account.email ? { email: account.email } : {}),
       ...(account.name ? { name: account.name } : {}),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
@@ -57,6 +59,7 @@ export class AuthSessionService {
       return {
         username: obj['username'],
         role: normalizeRole(obj['role']),
+        ...(typeof obj['email'] === 'string' ? { email: obj['email'] } : {}),
         ...(typeof obj['name'] === 'string' ? { name: obj['name'] } : {}),
       };
     } catch {
@@ -66,6 +69,14 @@ export class AuthSessionService {
 
   getRole(): UserRole | null {
     return this.getCurrentUser()?.role ?? null;
+  }
+
+  getUserEmail(): string | null {
+    const current = this.getCurrentUser();
+    if (!current) {
+      return null;
+    }
+    return current.email ?? current.username;
   }
 
   clearSession(): void {

@@ -19,8 +19,8 @@
         </span>
       </div>
       <div class="hero__actions">
-        <button type="button" class="btn btn--secondary" (click)="editarEvento()">Editar</button>
-        <button type="button" class="btn btn--danger" (click)="eliminarEvento()">Eliminar</button>
+        <button *ngIf="!isParticipante" type="button" class="btn btn--secondary" (click)="editarEvento()">Editar</button>
+        <button *ngIf="!isParticipante" type="button" class="btn btn--danger" (click)="eliminarEvento()">Eliminar</button>
       </div>
     </div>
 
@@ -41,13 +41,17 @@
         <dt>Cupo</dt>
         <dd class="meta-item__cupo">{{ ev.inscritos }} / {{ ev.cupoMax }}</dd>
       </div>
+      <div *ngIf="isParticipante" class="meta-item">
+        <dt>Mi inscripción</dt>
+        <dd>{{ estadoInscripcionUsuario }}</dd>
+      </div>
     </dl>
   </article>
 
   <section class="card card--section" aria-labelledby="actividades-heading">
     <div class="section-head">
       <h2 id="actividades-heading" class="section-head__title">Actividades</h2>
-      <button type="button" class="btn btn--primary" (click)="agregarActividad()">
+      <button *ngIf="!isParticipante" type="button" class="btn btn--primary" (click)="agregarActividad()">
         Agregar actividad
       </button>
     </div>
@@ -60,7 +64,7 @@
             <th>Horario</th>
             <th>Conferencista</th>
             <th>Estado</th>
-            <th class="data-table__actions">Acciones</th>
+            <th *ngIf="!isParticipante" class="data-table__actions">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -80,7 +84,7 @@
                 {{ a.estado }}
               </span>
             </td>
-            <td data-label="Acciones" class="data-table__actions">
+            <td *ngIf="!isParticipante" data-label="Acciones" class="data-table__actions">
               <div class="row-actions" role="group" [attr.aria-label]="'Acciones para ' + a.nombre">
                 <button
                   type="button"
@@ -110,7 +114,7 @@
     <p *ngIf="ev.actividades.length === 0" class="empty-hint">No hay actividades registradas.</p>
   </section>
 
-  <section class="card card--section" aria-labelledby="participantes-heading">
+  <section *ngIf="!isParticipante" class="card card--section" aria-labelledby="participantes-heading">
     <h2 id="participantes-heading" class="section-head__title section-head__title--solo">
       Participantes
     </h2>

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { filter } from 'rxjs/operators';
+import { AuthSessionService } from '../../auth/auth-session.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -13,6 +14,7 @@ import { filter } from 'rxjs/operators';
 })
 export class SidebarComponent implements OnInit {
   private readonly router = inject(Router);
+  private readonly authSession = inject(AuthSessionService);
 
   isEventManagementOpen = false;
   isPeopleManagementOpen = false;
@@ -55,5 +57,9 @@ export class SidebarComponent implements OnInit {
     this.router.events
       .pipe(filter((e): e is NavigationEnd => e instanceof NavigationEnd))
       .subscribe((e) => syncEventSection(e.urlAfterRedirects));
+  }
+
+  get isParticipante(): boolean {
+    return this.authSession.getRole() === 'participante';
   }
 }
