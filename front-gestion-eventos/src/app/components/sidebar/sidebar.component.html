@@ -18,13 +18,13 @@
 
       <ul *ngIf="isEventManagementOpen" class="submenu">
         <li><a routerLink="/eventos"><mat-icon>calendar_today</mat-icon>Eventos</a></li>
-        <li *ngIf="!isParticipante"><a routerLink="/actividades"><mat-icon>view_agenda</mat-icon>Actividades</a></li>
-        <li *ngIf="!isParticipante"><a routerLink="/conferencistas"><mat-icon>record_voice_over</mat-icon>Conferencistas</a></li>
+        <li><a routerLink="/actividades"><mat-icon>view_agenda</mat-icon>Actividades</a></li>
+        <li *ngIf="canAccessAdminModules"><a routerLink="/conferencistas"><mat-icon>record_voice_over</mat-icon>Conferencistas</a></li>
       </ul>
     </li>
 
     <!-- Gestión de personas -->
-    <li *ngIf="!isParticipante" class="menu-item">
+    <li *ngIf="canAccessAdminModules" class="menu-item">
       <div class="menu-link" (click)="togglePeopleManagement()">
         <mat-icon>groups</mat-icon>
         <span>Gestión de personas</span>
@@ -38,7 +38,7 @@
     </li>
 
     <!-- Operaciones -->
-    <li *ngIf="!isParticipante" class="menu-item">
+    <li *ngIf="canAccessAdminModules" class="menu-item">
       <div class="menu-link" (click)="toggleOperations()">
         <mat-icon>build</mat-icon>
         <span>Operaciones</span>
@@ -52,7 +52,7 @@
     </li>
 
     <!-- Sistema -->
-    <li *ngIf="!isParticipante" class="menu-item">
+    <li *ngIf="canAccessAdminModules" class="menu-item">
       <div class="menu-link" (click)="toggleSystem()">
         <mat-icon>settings</mat-icon>
         <span>Sistema</span>

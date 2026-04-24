@@ -6,7 +6,7 @@
         Consulta, filtra y gestiona los eventos del sistema desde un único panel.
       </p>
     </div>
-    <button *ngIf="!isParticipante" type="button" class="btn btn--primary" (click)="crearEvento()">
+    <button *ngIf="canManageEvents" type="button" class="btn btn--primary" (click)="crearEvento()">
       Crear evento
     </button>
   </header>
@@ -108,7 +108,7 @@
                   Desinscribirse
                 </button>
                 <button
-                  *ngIf="!isParticipante"
+                  *ngIf="canManageEvents"
                   type="button"
                   class="action-icon-btn action-icon-btn--edit"
                   (click)="editar(e)"
@@ -118,7 +118,7 @@
                   <mat-icon>edit</mat-icon>
                 </button>
                 <button
-                  *ngIf="!isParticipante"
+                  *ngIf="canManageEvents"
                   type="button"
                   class="action-icon-btn action-icon-btn--delete"
                   (click)="eliminar(e)"
@@ -187,7 +187,7 @@
           Desinscribirse
         </button>
         <button
-          *ngIf="!isParticipante"
+          *ngIf="canManageEvents"
           type="button"
           class="action-icon-btn action-icon-btn--edit"
           (click)="editar(e)"
@@ -197,7 +197,7 @@
           <mat-icon>edit</mat-icon>
         </button>
         <button
-          *ngIf="!isParticipante"
+          *ngIf="canManageEvents"
           type="button"
           class="action-icon-btn action-icon-btn--delete"
           (click)="eliminar(e)"

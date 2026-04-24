@@ -1,0 +1,51 @@
+<div class="detalle-page">
+  <nav class="detalle-nav">
+    <a routerLink="/actividades" class="back-link">← Volver a actividades</a>
+  </nav>
+
+  <section *ngIf="actividad as a; else notFound" class="card">
+    <header class="card-header">
+      <h1 class="title">{{ a.titulo }}</h1>
+      <span class="badge">{{ a.categoria }}</span>
+    </header>
+
+    <dl class="grid">
+      <div>
+        <dt>Evento asociado</dt>
+        <dd>{{ a.eventoNombre }}</dd>
+      </div>
+      <div>
+        <dt>Categoría</dt>
+        <dd>{{ a.categoria }}</dd>
+      </div>
+      <div>
+        <dt>Inicio</dt>
+        <dd>{{ a.inicio | date: 'dd/MM/yyyy HH:mm' }}</dd>
+      </div>
+      <div>
+        <dt>Fin</dt>
+        <dd>{{ a.fin | date: 'dd/MM/yyyy HH:mm' }}</dd>
+      </div>
+      <div>
+        <dt>Lugar</dt>
+        <dd>{{ a.lugar }}</dd>
+      </div>
+      <div *ngIf="!isConferencista">
+        <dt>Conferencistas</dt>
+        <dd>{{ conferencistasText }}</dd>
+      </div>
+    </dl>
+
+    <section class="description">
+      <h2>Descripción</h2>
+      <p>{{ a.descripcion }}</p>
+    </section>
+  </section>
+
+  <ng-template #notFound>
+    <section class="card">
+      <h1 class="title">Actividad no encontrada</h1>
+      <p>La actividad solicitada no existe en el mock actual.</p>
+    </section>
+  </ng-template>
+</div>

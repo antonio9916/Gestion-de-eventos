@@ -1,0 +1,144 @@
+:host {
+  --c-deep: #0b486b;
+  --c-teal: #3b8686;
+  --c-mint: #79bd9a;
+  --c-mint-light: #a8dba8;
+  --c-accent: #cff09e;
+  --surface: #fff;
+  --page-bg: linear-gradient(160deg, #f4faf7 0%, #eef6f3 45%, #f8fcf5 100%);
+  display: block;
+}
+
+.actividades-page {
+  min-height: 100%;
+  padding: 1.5rem clamp(1rem, 3vw, 2rem) 2.5rem;
+  background: var(--page-bg);
+}
+
+.page-header {
+  margin-bottom: 1rem;
+}
+
+.page-title {
+  margin: 0 0 0.3rem;
+  color: var(--c-deep);
+  font-size: clamp(1.55rem, 2.4vw, 1.95rem);
+}
+
+.page-subtitle {
+  margin: 0;
+  color: rgba(26, 47, 56, 0.72);
+}
+
+.card {
+  background: var(--surface);
+  border-radius: 16px;
+  border: 1px solid rgba(121, 189, 154, 0.22);
+  box-shadow: 0 8px 28px rgba(11, 72, 107, 0.08);
+}
+
+.card--table {
+  overflow: hidden;
+}
+
+.table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.data-table thead th {
+  text-align: left;
+  padding: 0.85rem 0.95rem;
+  background: linear-gradient(180deg, rgba(168, 219, 168, 0.35), rgba(207, 240, 158, 0.2));
+  color: var(--c-deep);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.data-table tbody td {
+  padding: 0.9rem 0.95rem;
+  border-bottom: 1px solid rgba(121, 189, 154, 0.18);
+}
+
+.data-table__row:hover {
+  background: rgba(168, 219, 168, 0.18);
+}
+
+.cell-strong {
+  font-weight: 600;
+  color: #143544;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.24rem 0.58rem;
+  border-radius: 999px;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.badge--categoria {
+  color: #17404d;
+  background: rgba(207, 240, 158, 0.7);
+  border: 1px solid rgba(59, 134, 134, 0.25);
+}
+
+.data-table__actions {
+  white-space: nowrap;
+}
+
+.row-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.action-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.3rem;
+  height: 2.3rem;
+  border-radius: 50%;
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.action-icon-btn mat-icon {
+  font-size: 1.2rem;
+  width: 1.2rem;
+  height: 1.2rem;
+}
+
+.action-icon-btn--view {
+  color: var(--c-teal);
+  background: rgba(121, 189, 154, 0.22);
+}
+
+.action-icon-btn--edit {
+  color: var(--c-deep);
+  background: rgba(11, 72, 107, 0.1);
+}
+
+.action-icon-btn--assign {
+  color: #1f5d54;
+  background: rgba(168, 219, 168, 0.36);
+}
+
+.action-icon-btn--delete {
+  color: #b83232;
+  background: rgba(220, 80, 80, 0.14);
+}
+
+.empty-state {
+  margin: 0;
+  padding: 1.2rem;
+  text-align: center;
+  color: rgba(26, 47, 56, 0.7);
+}

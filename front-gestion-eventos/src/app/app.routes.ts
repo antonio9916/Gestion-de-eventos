@@ -9,6 +9,8 @@ import { EventFormTestComponent } from './components/event-form/event-form-test.
 import { authChildGuard, authGuard, roleGuard } from './auth/auth.guards';
 import { UnauthorizedComponent } from './errors/unauthorized/unauthorized.component';
 import { NotFoundComponent } from './errors/not-found/not-found.component';
+import { ActividadesComponent } from './actividades/actividades.component';
+import { ActividadDetalleComponent } from './actividades/actividad-detalle.component';
 
 export const routes: Routes = [
   { path: '', pathMatch: 'full', redirectTo: 'login' },
@@ -36,6 +38,18 @@ export const routes: Routes = [
       {
         path: 'eventos',
         component: EventosComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'organizador', 'conferencista', 'participante'] },
+      },
+      {
+        path: 'actividades',
+        component: ActividadesComponent,
+        canActivate: [roleGuard],
+        data: { roles: ['admin', 'organizador', 'conferencista', 'participante'] },
+      },
+      {
+        path: 'actividades/:id',
+        component: ActividadDetalleComponent,
         canActivate: [roleGuard],
         data: { roles: ['admin', 'organizador', 'conferencista', 'participante'] },
       },

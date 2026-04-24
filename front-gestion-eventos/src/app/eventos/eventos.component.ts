@@ -127,6 +127,11 @@ export class EventosComponent {
     return this.authSession.getRole() === 'participante';
   }
 
+  get canManageEvents(): boolean {
+    const role = this.authSession.getRole();
+    return role === 'admin' || role === 'organizador';
+  }
+
   puedeInscribirse(evento: EventoListItem): boolean {
     return this.isParticipante && evento.estado === 'Activo' && !this.isInscrito(evento);
   }

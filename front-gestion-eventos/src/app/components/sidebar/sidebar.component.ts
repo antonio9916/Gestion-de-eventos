@@ -62,4 +62,13 @@ export class SidebarComponent implements OnInit {
   get isParticipante(): boolean {
     return this.authSession.getRole() === 'participante';
   }
+
+  get isConferencista(): boolean {
+    return this.authSession.getRole() === 'conferencista';
+  }
+
+  get canAccessAdminModules(): boolean {
+    const role = this.authSession.getRole();
+    return role === 'admin' || role === 'organizador';
+  }
 }

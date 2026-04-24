@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 import { AuthSessionService } from '../auth/auth-session.service';
 
 export interface UserAccount {
+  id?: number;
   name: string;
   username: string;
   email: string;
@@ -22,6 +23,7 @@ export interface UserAccount {
 export class LoginComponent {
   users: UserAccount[] = [
     {
+      id: 1,
       name: 'Laura Gómez',
       username: 'admin_laura',
       email: 'laura.gomez@example.com',
@@ -29,6 +31,7 @@ export class LoginComponent {
       role: 'Administrador',
     },
     {
+      id: 2,
       name: 'Carlos Méndez',
       username: 'participante_carlos',
       email: 'carlos.mendez@example.com',
@@ -36,6 +39,7 @@ export class LoginComponent {
       role: 'Participante',
     },
     {
+      id: 3,
       name: 'María Torres',
       username: 'organizador_maria',
       email: 'maria.torres@example.com',
@@ -43,6 +47,7 @@ export class LoginComponent {
       role: 'Organizador',
     },
     {
+      id: 4,
       name: 'Ricardo Salas',
       username: 'conferencista_ricardo',
       email: 'ricardo.salas@example.com',
@@ -94,6 +99,7 @@ export class LoginComponent {
     }
 
     this.authSession.saveAuthenticatedUser({
+      id: user.id,
       username: user.username,
       role: user.role,
       email: user.email,
@@ -126,7 +132,8 @@ export class LoginComponent {
       return;
     }
 
-    this.users.push(newUser);
+    const nextId = Math.max(...this.users.map((account) => account.id ?? 0), 0) + 1;
+    this.users.push({ ...newUser, id: nextId });
     this.message = 'Usuario creado correctamente. Ahora puedes iniciar sesión.';
     this.registerForm.reset({ role: 'Participante' });
     this.showRegister = false;

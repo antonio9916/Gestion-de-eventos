@@ -268,6 +268,11 @@ export class EventoDetalleComponent implements OnInit, OnDestroy {
     return this.authSession.getRole() === 'participante';
   }
 
+  get canManageEvent(): boolean {
+    const role = this.authSession.getRole();
+    return role === 'admin' || role === 'organizador';
+  }
+
   get estadoInscripcionUsuario(): string {
     if (!this.evento || this.evento.estado === 'Cancelado') {
       return 'Inscripción no disponible';

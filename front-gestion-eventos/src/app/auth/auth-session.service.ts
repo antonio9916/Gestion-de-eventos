@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 export type UserRole = 'admin' | 'participante' | 'organizador' | 'conferencista';
 
 export interface AuthenticatedUser {
+  id?: number;
   username: string;
   role: UserRole;
   email?: string;
@@ -32,8 +33,9 @@ export function normalizeRole(displayOrCanonical: string): UserRole {
 
 @Injectable({ providedIn: 'root' })
 export class AuthSessionService {
-  saveAuthenticatedUser(account: { username: string; role: string; email?: string; name?: string }): void {
+  saveAuthenticatedUser(account: { id?: number; username: string; role: string; email?: string; name?: string }): void {
     const payload: AuthenticatedUser = {
+      ...(typeof account.id === 'number' ? { id: account.id } : {}),
       username: account.username,
       role: normalizeRole(account.role),
       ...(account.email ? { email: account.email } : {}),
@@ -57,6 +59,7 @@ export class AuthSessionService {
         return null;
       }
       return {
+        ...(typeof obj['id'] === 'number' ? { id: obj['id'] } : {}),
         username: obj['username'],
         role: normalizeRole(obj['role']),
         ...(typeof obj['email'] === 'string' ? { email: obj['email'] } : {}),

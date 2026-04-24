@@ -1,0 +1,90 @@
+<div class="actividades-page">
+  <header class="page-header">
+    <h1 class="page-title">{{ isConferencista ? 'Mis actividades asignadas' : 'Actividades' }}</h1>
+    <p class="page-subtitle">
+      {{
+        isConferencista
+          ? 'Vista de solo lectura con las actividades asignadas a tu perfil de conferencista.'
+          : 'Listado general de actividades vinculadas a los eventos del sistema.'
+      }}
+    </p>
+  </header>
+
+  <section class="card card--table" aria-label="Listado de actividades">
+    <div class="table-wrap">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Título</th>
+            <th>Evento</th>
+            <th>Categoría</th>
+            <th>Inicio</th>
+            <th>Fin</th>
+            <th>Lugar</th>
+            <th *ngIf="!isConferencista">Conferencistas</th>
+            <th class="data-table__actions">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let a of actividades" class="data-table__row">
+            <td data-label="Título"><span class="cell-strong">{{ a.titulo }}</span></td>
+            <td data-label="Evento">{{ a.eventoNombre }}</td>
+            <td data-label="Categoría">
+              <span class="badge badge--categoria">{{ a.categoria }}</span>
+            </td>
+            <td data-label="Inicio">{{ a.inicio | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td data-label="Fin">{{ a.fin | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td data-label="Lugar">{{ a.lugar }}</td>
+            <td *ngIf="!isConferencista" data-label="Conferencistas">{{ getConferencistasText(a) }}</td>
+            <td data-label="Acciones" class="data-table__actions">
+              <div class="row-actions">
+                <button
+                  type="button"
+                  class="action-icon-btn action-icon-btn--view"
+                  (click)="verDetalle(a)"
+                  title="Ver detalle"
+                  aria-label="Ver detalle"
+                >
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button
+                  *ngIf="canManageActivities"
+                  type="button"
+                  class="action-icon-btn action-icon-btn--edit"
+                  (click)="editarActividad(a)"
+                  title="Editar"
+                  aria-label="Editar"
+                >
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button
+                  *ngIf="canManageActivities"
+                  type="button"
+                  class="action-icon-btn action-icon-btn--assign"
+                  (click)="asignarConferencista(a)"
+                  title="Asignar conferencista"
+                  aria-label="Asignar conferencista"
+                >
+                  <mat-icon>person_add</mat-icon>
+                </button>
+                <button
+                  *ngIf="canManageActivities"
+                  type="button"
+                  class="action-icon-btn action-icon-btn--delete"
+                  (click)="eliminarActividad(a)"
+                  title="Eliminar"
+                  aria-label="Eliminar"
+                >
+                  <mat-icon>delete_outline</mat-icon>
+                </button>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p *ngIf="actividades.length === 0" class="empty-state">
+      {{ isConferencista ? 'No tienes actividades asignadas actualmente.' : 'No hay actividades disponibles.' }}
+    </p>
+  </section>
+</div>

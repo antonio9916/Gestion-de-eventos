@@ -19,8 +19,8 @@
         </span>
       </div>
       <div class="hero__actions">
-        <button *ngIf="!isParticipante" type="button" class="btn btn--secondary" (click)="editarEvento()">Editar</button>
-        <button *ngIf="!isParticipante" type="button" class="btn btn--danger" (click)="eliminarEvento()">Eliminar</button>
+        <button *ngIf="canManageEvent" type="button" class="btn btn--secondary" (click)="editarEvento()">Editar</button>
+        <button *ngIf="canManageEvent" type="button" class="btn btn--danger" (click)="eliminarEvento()">Eliminar</button>
       </div>
     </div>
 
@@ -51,7 +51,7 @@
   <section class="card card--section" aria-labelledby="actividades-heading">
     <div class="section-head">
       <h2 id="actividades-heading" class="section-head__title">Actividades</h2>
-      <button *ngIf="!isParticipante" type="button" class="btn btn--primary" (click)="agregarActividad()">
+      <button *ngIf="canManageEvent" type="button" class="btn btn--primary" (click)="agregarActividad()">
         Agregar actividad
       </button>
     </div>
@@ -64,7 +64,7 @@
             <th>Horario</th>
             <th>Conferencista</th>
             <th>Estado</th>
-            <th *ngIf="!isParticipante" class="data-table__actions">Acciones</th>
+            <th *ngIf="canManageEvent" class="data-table__actions">Acciones</th>
           </tr>
         </thead>
         <tbody>
@@ -84,7 +84,7 @@
                 {{ a.estado }}
               </span>
             </td>
-            <td *ngIf="!isParticipante" data-label="Acciones" class="data-table__actions">
+            <td *ngIf="canManageEvent" data-label="Acciones" class="data-table__actions">
               <div class="row-actions" role="group" [attr.aria-label]="'Acciones para ' + a.nombre">
                 <button
                   type="button"
@@ -114,7 +114,7 @@
     <p *ngIf="ev.actividades.length === 0" class="empty-hint">No hay actividades registradas.</p>
   </section>
 
-  <section *ngIf="!isParticipante" class="card card--section" aria-labelledby="participantes-heading">
+  <section *ngIf="canManageEvent" class="card card--section" aria-labelledby="participantes-heading">
     <h2 id="participantes-heading" class="section-head__title section-head__title--solo">
       Participantes
     </h2>
