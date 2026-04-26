@@ -270,7 +270,7 @@ export class EventoDetalleComponent implements OnInit, OnDestroy {
 
   get canManageEvent(): boolean {
     const role = this.authSession.getRole();
-    return role === 'admin' || role === 'organizador';
+    return role === 'admin' || role === 'organizador'||role ==='conferencista';
   }
 
   get estadoInscripcionUsuario(): string {
