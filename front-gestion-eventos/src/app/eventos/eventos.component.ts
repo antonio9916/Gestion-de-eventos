@@ -6,6 +6,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { AuthSessionService } from '../auth/auth-session.service';
 import { ConfirmationModalComponent } from '../shared/confirmation-modal/confirmation-modal.component';
 import { EventoInscripcionService } from './evento-inscripcion.service';
+import { EventoService, EventoBackend, EventoEstado as EventoEstadoEnum } from './evento.service'; // Inyectamos el nuevo servicio
 
 export type EventoEstado = 'Activo' | 'Finalizado' | 'Cancelado';
 
@@ -32,6 +33,7 @@ export class EventosComponent {
   private readonly router = inject(Router);
   private readonly authSession = inject(AuthSessionService);
   private readonly inscripcionService = inject(EventoInscripcionService);
+  private readonly eventoService = inject(EventoService);
 
   readonly tiposEvento = ['Conferencia', 'Taller', 'Networking', 'Feria', 'Webinar'] as const;
 
@@ -41,64 +43,9 @@ export class EventosComponent {
   tipoSeleccionado = '';
   estadoFiltro: 'Todos' | EventoEstado = 'Todos';
 
-  private readonly mockEventos: EventoListItem[] = [
-    {
-      id: 1,
-      nombre: 'Cumbre de Innovación 2026',
-      fecha: '15 abr 2026, 09:00',
-      lugar: 'Centro de Convenciones Norte',
-      tipo: 'Conferencia',
-      cupo: 350,
-      estado: 'Activo',
-    },
-    {
-      id: 2,
-      nombre: 'Taller UX para equipos',
-      fecha: '22 abr 2026, 14:00',
-      lugar: 'Aula Magna — Campus Central',
-      tipo: 'Taller',
-      cupo: 40,
-      estado: 'Activo',
-    },
-    {
-      id: 3,
-      nombre: 'Meetup Desarrolladores',
-      fecha: '3 mar 2026, 18:30',
-      lugar: 'Hub Coworking',
-      tipo: 'Networking',
-      cupo: 80,
-      estado: 'Finalizado',
-    },
-    {
-      id: 4,
-      nombre: 'Feria de Empleo Tech',
-      fecha: '10 may 2026, 10:00',
-      lugar: 'Pabellón Sur',
-      tipo: 'Feria',
-      cupo: 500,
-      estado: 'Cancelado',
-    },
-    {
-      id: 5,
-      nombre: 'Webinar seguridad en la nube',
-      fecha: '28 abr 2026, 11:00',
-      lugar: 'Online',
-      tipo: 'Webinar',
-      cupo: 200,
-      estado: 'Activo',
-    },
-    {
-      id: 6,
-      nombre: 'Hackathon 48h',
-      fecha: '1 feb 2026, 08:00',
-      lugar: 'Laboratorio de Software',
-      tipo: 'Taller',
-      cupo: 120,
-      estado: 'Finalizado',
-    },
-  ];
+  todoEventos: EventoListItem[] = [];
+  eventosVisibles: EventoListItem[] = [];
 
-  eventosVisibles: EventoListItem[] = [...this.mockEventos];
   confirmOpen = false;
   confirmTitle = '';
   confirmMessage = '';
@@ -110,12 +57,43 @@ export class EventosComponent {
   successMessage = '';
   successEvento: EventoListItem | null = null;
 
+  ngOnInit(): void {
+    this.cargarEventosDesdeBackend();
+  }
+
+  cargarEventosDesdeBackend(): void {
+    this.eventoService.getEventos().subscribe({
+      next: (data: EventoBackend[]) => {
+        // Mapeamos lo que viene de Postgres al formato que tu HTML ya entiende
+        this.todoEventos = data.map(e => {
+          // Lógica simple para calcular estado basándonos en fechas
+          const ahora = new Date();
+          const fin = new Date(e.endDate);
+          const estadoCalculado: EventoEstado = fin < ahora ? 'Finalizado' : 'Activo';
+
+          return {
+            id: e.id,
+            nombre: e.title,
+            fecha: new Date(e.startDate).toLocaleString(),
+            lugar: 'Ver descripción', // Como Postgres no tiene campo "lugar", usamos un marcador o e.description
+            tipo: e.eventType.charAt(0).toUpperCase() + e.eventType.slice(1), // Capitaliza
+            cupo: e.maxAttendees,
+            estado: estadoCalculado
+          };
+        });
+        this.eventosVisibles = [...this.todoEventos];
+        this.aplicarFiltros();
+      },
+      error: (err) => console.error('Error estirando eventos de Django:', err)
+    });
+  }
+
   aplicarFiltros(): void {
     const nombre = this.buscarNombre.trim().toLowerCase();
     const tipo = this.tipoSeleccionado;
     const estado = this.estadoFiltro;
 
-    this.eventosVisibles = this.mockEventos.filter((e) => {
+    this.eventosVisibles = this.todoEventos.filter((e) => {
       const matchNombre = !nombre || e.nombre.toLowerCase().includes(nombre);
       const matchTipo = !tipo || e.tipo === tipo;
       const matchEstado = estado === 'Todos' || e.estado === estado;
@@ -142,10 +120,7 @@ export class EventosComponent {
 
   isInscrito(evento: EventoListItem): boolean {
     const username = this.authSession.getCurrentUser()?.username;
-    if (!username) {
-      return false;
-    }
-    return this.inscripcionService.isInscrito(username, evento.id);
+    return username ? this.inscripcionService.isInscrito(username, evento.id) : false;
   }
 
   crearEvento(): void {
@@ -161,7 +136,15 @@ export class EventosComponent {
   }
 
   eliminar(evento: EventoListItem): void {
-    window.alert(`Eliminar: ${evento.nombre}`);
+    if (window.confirm(`¿Estás seguro de que deseas eliminar permanentemente: ${evento.nombre}?`)) {
+      this.eventoService.eliminarEvento(evento.id).subscribe({
+        next: () => {
+          // Refrescamos la lista directamente desde la base de datos para verificar el cambio
+          this.cargarEventosDesdeBackend();
+        },
+        error: (err) => alert('No se pudo eliminar el evento: ' + err.message)
+      });
+    }
   }
 
   solicitarInscripcion(evento: EventoListItem): void {

@@ -61,19 +61,23 @@ export class LoginComponent {
 
         console.log('Respuesta del servidor:', response);
 
-        //  GUARDAR USUARIO REAL (con roles )
+        // Convertimos el rol único de Django en un arreglo para cumplir con la interfaz UserAccount
+        const userRoles = response.role ? [response.role] : ['Participante'];
+
+        // GUARDAR USUARIO REAL (con roles adaptados a arreglo)
         const user: UserAccount = {
           id: response.id,
-          name: response.username,
+          name: response.name || response.username, // Usa el nombre si viene, sino el username
           email: response.email,
-          roles: response.roles
+          roles: userRoles
         };
 
+        // Pasamos los datos exactos que tu AuthSessionService espera procesar
         this.authSession.saveAuthenticatedUser({
           id: response.id,
           username: response.username,
           email: response.email,
-          role: response.roles[0]
+          role: response.role || 'Participante' // Aquí le pasamos el string directo en singular
         });
 
         this.router.navigate(['/home']);

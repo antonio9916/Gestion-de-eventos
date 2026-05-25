@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'corsheaders',
     'rest_framework',
+    'rest_framework_simplejwt',
     'App',
 ]
 
@@ -78,8 +79,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'gestion_eventos',
+        'USER': 'postgres',
+        'PASSWORD': 'aguante18',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -152,3 +157,9 @@ CORS_ALLOW_HEADERS = [
     "x-csrf-token",
     "x-requested-with",
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}

@@ -7,7 +7,7 @@ import { EventListComponent, EventItem } from '../components/event-list/event-li
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, HeroComponent, EventListComponent, FeaturesComponent, FooterComponent],
+  imports: [CommonModule, HeroComponent, EventListComponent, FooterComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.scss'],
 })
