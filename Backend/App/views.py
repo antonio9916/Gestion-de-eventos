@@ -6,7 +6,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import get_object_or_404
 from django.utils.dateparse import parse_datetime
-from .models import Rol, UsuarioRol, Evento
+from .models import Rol, UsuarioRol, Evento, Inscripcion
 
 @csrf_exempt
 def register_view(request):
@@ -161,3 +161,106 @@ def evento_api_view(request, pk=None):
         return JsonResponse({'message': 'Evento eliminado correctamente'}, status=200)
 
     return JsonResponse({'error': 'Método no soportado'}, status=405)
+    
+@csrf_exempt
+def inscripcion_view(request):
+
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+
+            usuario_id = data.get('usuario_id')
+            evento_id = data.get('evento_id')
+
+            usuario = User.objects.get(id=usuario_id)
+            evento = Evento.objects.get(id=evento_id)
+
+            if Inscripcion.objects.filter(
+                usuario=usuario,
+                evento=evento
+            ).exists():
+
+                return JsonResponse(
+                    {'error': 'Ya estás inscrito'},
+                    status=400
+                )
+
+            Inscripcion.objects.create(
+                usuario=usuario,
+                evento=evento
+            )
+
+            return JsonResponse({
+                'message': 'Inscripción realizada correctamente'
+            })
+
+        except User.DoesNotExist:
+            return JsonResponse({'error': 'Usuario no encontrado'}, status=404)
+
+        except Evento.DoesNotExist:
+            return JsonResponse({'error': 'Evento no encontrado'}, status=404)
+
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=400)
+
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+@csrf_exempt
+def cancelar_inscripcion_view(request):
+
+    if request.method == 'POST':
+
+        try:
+            data = json.loads(request.body)
+
+            usuario_id = data.get('usuario_id')
+            evento_id = data.get('evento_id')
+
+            inscripcion = Inscripcion.objects.get(
+                usuario_id=usuario_id,
+                evento_id=evento_id
+            )
+
+            inscripcion.delete()
+
+            return JsonResponse({
+                'message': 'Inscripción cancelada'
+            })
+
+        except Inscripcion.DoesNotExist:
+            return JsonResponse({
+                'error': 'No existe inscripción'
+            }, status=404)
+
+    return JsonResponse({'error': 'Método no permitido'}, status=405)
+    
+@csrf_exempt
+def verificar_inscripcion_view(request, evento_id, usuario_id):
+
+    existe = Inscripcion.objects.filter(
+        evento_id=evento_id,
+        usuario_id=usuario_id
+    ).exists()
+
+    return JsonResponse({
+        'inscrito': existe
+    })
+    
+@csrf_exempt
+def participantes_evento_view(request, evento_id):
+
+    inscripciones = Inscripcion.objects.filter(
+        evento_id=evento_id
+    ).select_related('usuario')
+
+    participantes = []
+
+    for i in inscripciones:
+        participantes.append({
+            'id': i.usuario.id,
+            'username': i.usuario.username,
+            'email': i.usuario.email,
+            'nombre': i.usuario.first_name
+        })
+
+    return JsonResponse(participantes, safe=False)

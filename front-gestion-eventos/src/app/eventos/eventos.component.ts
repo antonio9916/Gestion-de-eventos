@@ -56,37 +56,57 @@ export class EventosComponent {
   successTitle = '';
   successMessage = '';
   successEvento: EventoListItem | null = null;
+  inscripcionesUsuario = new Set<number>();
 
   ngOnInit(): void {
-    this.cargarEventosDesdeBackend();
+	console.log('ENTRE A EVENTOS COMPONENT');
+	this.cargarEventosDesdeBackend();
   }
 
-  cargarEventosDesdeBackend(): void {
-    this.eventoService.getEventos().subscribe({
-      next: (data: EventoBackend[]) => {
-        // Mapeamos lo que viene de Postgres al formato que tu HTML ya entiende
-        this.todoEventos = data.map(e => {
-          // Lógica simple para calcular estado basándonos en fechas
-          const ahora = new Date();
-          const fin = new Date(e.endDate);
-          const estadoCalculado: EventoEstado = fin < ahora ? 'Finalizado' : 'Activo';
+cargarEventosDesdeBackend(): void {
 
-          return {
-            id: e.id,
-            nombre: e.title,
-            fecha: new Date(e.startDate).toLocaleString(),
-            lugar: 'Ver descripción', // Como Postgres no tiene campo "lugar", usamos un marcador o e.description
-            tipo: e.eventType.charAt(0).toUpperCase() + e.eventType.slice(1), // Capitaliza
-            cupo: e.maxAttendees,
-            estado: estadoCalculado
-          };
-        });
-        this.eventosVisibles = [...this.todoEventos];
-        this.aplicarFiltros();
-      },
-      error: (err) => console.error('Error estirando eventos de Django:', err)
-    });
-  }
+  this.eventoService.getEventos().subscribe({
+
+    next: (data: EventoBackend[]) => {
+
+      console.log('EVENTOS DJANGO', data);
+
+      this.todoEventos = data.map(e => {
+
+        const ahora = new Date();
+        const fin = new Date(e.endDate);
+
+        const estadoCalculado: EventoEstado =
+          fin < ahora
+            ? 'Finalizado'
+            : 'Activo';
+
+        return {
+          id: e.id,
+          nombre: e.title,
+          fecha: new Date(e.startDate).toLocaleString(),
+          lugar: 'Ver descripción',
+          tipo:
+            e.eventType.charAt(0).toUpperCase() +
+            e.eventType.slice(1),
+          cupo: e.maxAttendees,
+          estado: estadoCalculado
+        };
+
+      });
+
+      this.eventosVisibles = [...this.todoEventos];
+
+      this.aplicarFiltros();
+    },
+
+    error: (err) =>
+      console.error(
+        'Error estirando eventos de Django:',
+        err
+      )
+  });
+}
 
   aplicarFiltros(): void {
     const nombre = this.buscarNombre.trim().toLowerCase();
@@ -110,18 +130,20 @@ export class EventosComponent {
     return role === 'admin' || role === 'organizador';
   }
 
-  puedeInscribirse(evento: EventoListItem): boolean {
-    return this.isParticipante && evento.estado === 'Activo' && !this.isInscrito(evento);
-  }
+  
 
-  puedeDesinscribirse(evento: EventoListItem): boolean {
-    return this.isParticipante && evento.estado === 'Activo' && this.isInscrito(evento);
-  }
+puedeInscribirse(evento: EventoListItem): boolean {
+  return this.isParticipante &&
+         evento.estado === 'Activo';
+}
 
-  isInscrito(evento: EventoListItem): boolean {
-    const username = this.authSession.getCurrentUser()?.username;
-    return username ? this.inscripcionService.isInscrito(username, evento.id) : false;
-  }
+puedeDesinscribirse(evento: EventoListItem): boolean {
+  return false;
+}
+
+isInscrito(evento: EventoListItem): boolean {
+  return false;
+}
 
   crearEvento(): void {
     void this.router.navigate(['/eventos/crear/nuevo']);
@@ -163,27 +185,78 @@ export class EventosComponent {
     this.confirmOpen = true;
   }
 
-  confirmarAccion(): void {
-    const evento = this.selectedEvento;
-    const action = this.confirmAction;
-    const username = this.authSession.getCurrentUser()?.username;
-    if (!evento || !action || !username || evento.estado !== 'Activo') {
-      this.cerrarConfirmacion();
-      return;
-    }
+confirmarAccion(): void {
 
-    if (action === 'inscribir') {
-      this.inscripcionService.inscribirse(username, evento.id);
-      this.successEvento = evento;
-      this.successTitle = 'Inscripción exitosa';
-      this.successMessage = `Se envió confirmación al correo: ${this.authSession.getUserEmail() ?? username}`;
-      this.successOpen = true;
-    } else {
-      this.inscripcionService.desinscribirse(username, evento.id);
-    }
+  const evento = this.selectedEvento;
+  const action = this.confirmAction;
 
+console.log(
+  'Usuario actual:',
+  this.authSession.getCurrentUser()
+);
+
+  const userId =
+    this.authSession.getCurrentUser()?.id;
+
+  if (!evento || !action || !userId) {
     this.cerrarConfirmacion();
+    return;
   }
+
+  if (action === 'inscribir') {
+
+    this.inscripcionService
+      .inscribirse(userId, evento.id)
+      .subscribe({
+        next: () => {
+		
+		  this.inscripcionesUsuario.add(
+			evento.id
+		  );
+          this.successEvento = evento;
+
+          this.successTitle =
+            'Inscripción exitosa';
+
+          this.successMessage =
+            `Se envió confirmación al correo: ${this.authSession.getUserEmail()}`;
+
+          this.successOpen = true;
+        },
+
+        error: (err) => {
+          alert(
+            err.error?.error ||
+            'No se pudo realizar la inscripción'
+          );
+        }
+      });
+
+  } else {
+
+    this.inscripcionService
+      .desinscribirse(userId, evento.id)
+      .subscribe({
+        next: () => {
+
+			this.inscripcionesUsuario.delete(
+				evento.id
+			);
+
+			alert('Inscripción cancelada');
+		},
+
+        error: (err) => {
+          alert(
+            err.error?.error ||
+            'No se pudo cancelar la inscripción'
+          );
+        }
+      });
+  }
+
+  this.cerrarConfirmacion();
+}
 
   cerrarConfirmacion(): void {
     this.confirmOpen = false;

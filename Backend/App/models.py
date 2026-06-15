@@ -37,3 +37,15 @@ class Evento(models.Model):
 
     def __str__(self):
         return self.title
+        
+        # --- INSCRIPCIONES ---
+class Inscripcion(models.Model):
+    usuario = models.ForeignKey(User, on_delete=models.CASCADE)
+    evento = models.ForeignKey(Evento, on_delete=models.CASCADE)
+    fecha_inscripcion = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        unique_together = ('usuario', 'evento')
+
+    def __str__(self):
+        return f"{self.usuario.username} -> {self.evento.title}"

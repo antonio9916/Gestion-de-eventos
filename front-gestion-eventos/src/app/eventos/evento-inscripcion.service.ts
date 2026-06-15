@@ -1,50 +1,61 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
-const STORAGE_KEY = 'gestion_eventos_inscripciones';
-
-type InscripcionesPorUsuario = Record<string, number[]>;
-
-@Injectable({ providedIn: 'root' })
+@Injectable({
+  providedIn: 'root'
+})
 export class EventoInscripcionService {
-  isInscrito(username: string, eventoId: number): boolean {
-    return this.getUserInscripciones(username).includes(eventoId);
-  }
 
-  inscribirse(username: string, eventoId: number): void {
-    const current = this.readStorage();
-    const userSet = new Set(this.getUserInscripciones(username));
-    userSet.add(eventoId);
-    current[username] = [...userSet];
-    this.writeStorage(current);
-  }
+  private http = inject(HttpClient);
 
-  desinscribirse(username: string, eventoId: number): void {
-    const current = this.readStorage();
-    current[username] = this.getUserInscripciones(username).filter((id) => id !== eventoId);
-    this.writeStorage(current);
-  }
+  private api =
+    'http://localhost:8000/api';
 
-  private getUserInscripciones(username: string): number[] {
-    return this.readStorage()[username] ?? [];
-  }
+  inscribirse(
+    usuarioId: number,
+    eventoId: number
+  ): Observable<any> {
 
-  private readStorage(): InscripcionesPorUsuario {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return {};
-    }
-    try {
-      const parsed = JSON.parse(raw) as unknown;
-      if (!parsed || typeof parsed !== 'object') {
-        return {};
+    return this.http.post(
+      `${this.api}/inscripciones/`,
+      {
+        usuario_id: usuarioId,
+        evento_id: eventoId
       }
-      return parsed as InscripcionesPorUsuario;
-    } catch {
-      return {};
-    }
+    );
   }
 
-  private writeStorage(payload: InscripcionesPorUsuario): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  desinscribirse(
+    usuarioId: number,
+    eventoId: number
+  ): Observable<any> {
+
+    return this.http.post(
+      `${this.api}/inscripciones/cancelar/`,
+      {
+        usuario_id: usuarioId,
+        evento_id: eventoId
+      }
+    );
+  }
+
+  isInscrito(
+    usuarioId: number,
+    eventoId: number
+  ): Observable<any> {
+
+    return this.http.get(
+      `${this.api}/inscripciones/verificar/${eventoId}/${usuarioId}/`
+    );
+  }
+
+  participantes(
+    eventoId: number
+  ): Observable<any> {
+
+    return this.http.get(
+      `${this.api}/eventos/${eventoId}/participantes/`
+    );
   }
 }

@@ -19,7 +19,7 @@ export interface EventoBackend {
 @Injectable({ providedIn: 'root' })
 export class EventoService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8000/App/eventos/'; // Ajusta si tu ruta base cambia
+  private readonly apiUrl = 'http://localhost:8000/api/eventos/'; // Ajusta si tu ruta base cambia
 
   getEventos(): Observable<EventoBackend[]> {
     return this.http.get<EventoBackend[]>(this.apiUrl);

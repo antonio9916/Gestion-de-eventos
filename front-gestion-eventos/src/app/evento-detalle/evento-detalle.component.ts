@@ -274,17 +274,18 @@ export class EventoDetalleComponent implements OnInit, OnDestroy {
   }
 
   get estadoInscripcionUsuario(): string {
-    if (!this.evento || this.evento.estado === 'Cancelado') {
-      return 'Inscripción no disponible';
-    }
-    const username = this.authSession.getCurrentUser()?.username;
-    if (!username) {
-      return 'No autenticado';
-    }
-    return this.inscripcionService.isInscrito(username, this.evento.id)
-      ? 'Ya estás inscrito en este evento'
-      : 'Todavía no estás inscrito en este evento';
+  if (!this.evento || this.evento.estado === 'Cancelado') {
+    return 'Inscripción no disponible';
   }
+
+  const usuario = this.authSession.getCurrentUser();
+
+  if (!usuario) {
+    return 'No autenticado';
+  }
+
+  return 'Estado no verificado';
+}
 
   editarEvento(): void {
     window.alert('Editar evento (demo sin backend).');
