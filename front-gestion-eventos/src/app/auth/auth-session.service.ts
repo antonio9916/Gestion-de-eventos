@@ -1,4 +1,7 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 /**
  * Rol canónico en minúsculas para comprobaciones en el resto de la app.
@@ -20,7 +23,14 @@ export interface AuthenticatedUser {
   name?: string;
 }
 
+interface JWTTokenResponse {
+  access: string;
+  refresh: string;
+}
+
 const STORAGE_KEY = 'gestion_eventos_current_user';
+const JWT_ACCESS_TOKEN_KEY = 'jwt_access_token';
+const JWT_REFRESH_TOKEN_KEY = 'jwt_refresh_token';
 
 const CANONICAL_ROLES: readonly UserRole[] = [
   'admin',
@@ -54,6 +64,8 @@ export function normalizeRole(displayOrCanonical: string): UserRole {
   providedIn: 'root',
 })
 export class AuthSessionService {
+  private readonly http = inject(HttpClient);
+  private readonly apiUrl = 'http://localhost:8000/api';
 
   saveAuthenticatedUser(account: {
     id?: number;
@@ -71,6 +83,46 @@ export class AuthSessionService {
       ...(account.name ? { name: account.name } : {}),
     };
     localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  }
+
+  /**
+   * Guarda los tokens JWT en localStorage
+   */
+  saveJWTTokens(access: string, refresh: string): void {
+    localStorage.setItem(JWT_ACCESS_TOKEN_KEY, access);
+    localStorage.setItem(JWT_REFRESH_TOKEN_KEY, refresh);
+  }
+
+  /**
+   * Obtiene el token de acceso JWT
+   */
+  getAccessToken(): string | null {
+    return localStorage.getItem(JWT_ACCESS_TOKEN_KEY);
+  }
+
+  /**
+   * Obtiene el token de refresh JWT
+   */
+  getRefreshToken(): string | null {
+    return localStorage.getItem(JWT_REFRESH_TOKEN_KEY);
+  }
+
+  /**
+   * Obtiene nuevo token de acceso usando el refresh token
+   */
+  refreshAccessToken(): Observable<JWTTokenResponse> {
+    const refreshToken = this.getRefreshToken();
+    if (!refreshToken) {
+      throw new Error('No refresh token available');
+    }
+
+    return this.http.post<JWTTokenResponse>(`${this.apiUrl}/token/refresh/`, {
+      refresh: refreshToken
+    }).pipe(
+      tap(response => {
+        this.saveJWTTokens(response.access, response.refresh);
+      })
+    );
   }
 
   getCurrentUser(): AuthenticatedUser | null {
@@ -124,6 +176,8 @@ export class AuthSessionService {
 
   clearSession(): void {
     localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(JWT_ACCESS_TOKEN_KEY);
+    localStorage.removeItem(JWT_REFRESH_TOKEN_KEY);
   }
 
   /**
@@ -137,5 +191,12 @@ export class AuthSessionService {
     }
 
     return allowed.includes(current);
+  }
+
+  /**
+   * Comprueba si hay una sesión activa (usuario y token)
+   */
+  isAuthenticated(): boolean {
+    return this.getCurrentUser() !== null && this.getAccessToken() !== null;
   }
 }
