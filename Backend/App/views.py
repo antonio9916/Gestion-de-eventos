@@ -264,3 +264,26 @@ def participantes_evento_view(request, evento_id):
         })
 
     return JsonResponse(participantes, safe=False)
+    
+@csrf_exempt
+def inscripciones_usuario_view(request, usuario_id):
+
+    if request.method == "GET":
+
+        inscripciones = Inscripcion.objects.filter(
+            usuario_id=usuario_id
+        )
+
+        eventos = []
+
+        for inscripcion in inscripciones:
+            eventos.append(inscripcion.evento_id)
+
+        return JsonResponse({
+            "eventos": eventos
+        })
+
+    return JsonResponse(
+        {"error": "Método no permitido"},
+        status=405
+    )

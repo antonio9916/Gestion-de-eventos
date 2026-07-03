@@ -6,7 +6,8 @@ from .views import (
     inscripcion_view,
     cancelar_inscripcion_view,
     verificar_inscripcion_view,
-    participantes_evento_view
+    participantes_evento_view,
+    inscripciones_usuario_view
 )
 
 urlpatterns = [
@@ -27,5 +28,9 @@ urlpatterns = [
     path(
         'eventos/<int:evento_id>/participantes/',
         participantes_evento_view
+    ),
+    path(
+        'usuarios/<int:usuario_id>/inscripciones/',
+        inscripciones_usuario_view
     ),
 ]

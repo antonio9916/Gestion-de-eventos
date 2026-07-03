@@ -95,9 +95,34 @@ cargarEventosDesdeBackend(): void {
 
       });
 
-      this.eventosVisibles = [...this.todoEventos];
+		this.eventosVisibles = [...this.todoEventos];
 
-      this.aplicarFiltros();
+		this.aplicarFiltros();
+		const userId =
+		this.authSession.getCurrentUser()?.id;
+
+		if (userId) {
+
+			this.inscripcionService
+				.misInscripciones(userId)
+				.subscribe({
+
+			next: (resp: any) => {
+			    console.log('MIS INSCRIPCIONES', resp);
+
+				this.inscripcionesUsuario.clear();
+
+					resp.eventos.forEach((id: number) => {
+					this.inscripcionesUsuario.add(id);
+			});
+
+		}
+
+	});
+
+}
+	
+		
     },
 
     error: (err) =>
@@ -108,6 +133,33 @@ cargarEventosDesdeBackend(): void {
   });
 }
 
+  const userId =
+    this.authSession.getCurrentUser()?.id;
+
+  if (!userId) {
+    return;
+  }
+
+  this.inscripcionService
+    .isInscrito(userId, eventoId)
+    .subscribe({
+
+      next: (resp: any) => {
+
+        if (resp.inscrito) {
+          this.inscripcionesUsuario.add(eventoId);
+        } else {
+          this.inscripcionesUsuario.delete(eventoId);
+        }
+
+        this.eventosVisibles = [...this.todoEventos];
+
+      },
+
+      error: () => {}
+    });
+
+}
   aplicarFiltros(): void {
     const nombre = this.buscarNombre.trim().toLowerCase();
     const tipo = this.tipoSeleccionado;
@@ -133,16 +185,25 @@ cargarEventosDesdeBackend(): void {
   
 
 puedeInscribirse(evento: EventoListItem): boolean {
+
   return this.isParticipante &&
-         evento.estado === 'Activo';
+         evento.estado === 'Activo' &&
+         !this.inscripcionesUsuario.has(evento.id);
+
 }
 
 puedeDesinscribirse(evento: EventoListItem): boolean {
-  return false;
+
+  return this.isParticipante &&
+         evento.estado === 'Activo' &&
+         this.inscripcionesUsuario.has(evento.id);
+
 }
 
 isInscrito(evento: EventoListItem): boolean {
-  return false;
+
+  return this.inscripcionesUsuario.has(evento.id);
+
 }
 
   crearEvento(): void {
@@ -209,20 +270,22 @@ console.log(
       .inscribirse(userId, evento.id)
       .subscribe({
         next: () => {
-		
-		  this.inscripcionesUsuario.add(
-			evento.id
-		  );
-          this.successEvento = evento;
 
-          this.successTitle =
-            'Inscripción exitosa';
+		this.successEvento = evento;
 
-          this.successMessage =
-            `Se envió confirmación al correo: ${this.authSession.getUserEmail()}`;
+		this.successTitle =
+			'Inscripción exitosa';
 
-          this.successOpen = true;
-        },
+		this.successMessage =
+			`Se envió confirmación al correo: ${this.authSession.getUserEmail()}`;
+
+		this.successOpen = true;
+
+		this.inscripcionesUsuario.clear();
+
+		this.cargarEventosDesdeBackend();
+		this.cerrarConfirmacion();
+},
 
         error: (err) => {
           alert(
@@ -239,12 +302,14 @@ console.log(
       .subscribe({
         next: () => {
 
-			this.inscripcionesUsuario.delete(
-				evento.id
-			);
+			this.inscripcionesUsuario.clear();
+
+			this.cargarEventosDesdeBackend();
 
 			alert('Inscripción cancelada');
+			this.cerrarConfirmacion();
 		},
+		
 
         error: (err) => {
           alert(
@@ -255,7 +320,7 @@ console.log(
       });
   }
 
-  this.cerrarConfirmacion();
+  
 }
 
   cerrarConfirmacion(): void {
