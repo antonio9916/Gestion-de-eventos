@@ -58,4 +58,13 @@ export class EventoInscripcionService {
       `${this.api}/eventos/${eventoId}/participantes/`
     );
   }
+  misInscripciones(
+  usuarioId: number
+	): Observable<any> {
+
+  return this.http.get(
+    `${this.api}/usuarios/${usuarioId}/inscripciones/`
+  );
+
+}
 }
