@@ -12,6 +12,24 @@ export interface UserAccount {
   roles: string[];
 }
 
+interface LoginResponse {
+  id: number;
+  username: string;
+  email: string;
+  name?: string;
+  role: string;
+  access: string;
+  refresh: string;
+}
+
+interface RegisterResponse {
+  id: number;
+  username: string;
+  email: string;
+  name: string;
+  role: string;
+}
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -42,53 +60,53 @@ export class LoginComponent {
   showRegister = false;
   message = '';
   errorMessage = '';
+  isLoading = false;
 
   roles = ['Administrador', 'Participante', 'Organizador', 'Conferencista'];
 
   login(): void {
     this.message = '';
     this.errorMessage = '';
+    this.isLoading = true;
 
     if (this.loginForm.invalid) {
       this.errorMessage = 'Por favor completa todos los campos.';
+      this.isLoading = false;
       return;
     }
 
     const loginData = this.loginForm.value;
 
-    this.http.post('http://localhost:8000/api/login/', loginData).subscribe({
-      next: (response: any) => {
+    this.http.post<LoginResponse>('http://localhost:8000/api/login/', loginData).subscribe({
+      next: (response: LoginResponse) => {
 
         console.log('Respuesta del servidor:', response);
 
-        // Convertimos el rol único de Django en un arreglo para cumplir con la interfaz UserAccount
-        const userRoles = response.role ? [response.role] : ['Participante'];
+        // Guardar tokens JWT
+        this.authSession.saveJWTTokens(response.access, response.refresh);
 
-        // GUARDAR USUARIO REAL (con roles adaptados a arreglo)
-        const user: UserAccount = {
-          id: response.id,
-          name: response.name || response.username, // Usa el nombre si viene, sino el username
-          email: response.email,
-          roles: userRoles
-        };
-
-        // Pasamos los datos exactos que tu AuthSessionService espera procesar
+        // Guardar datos del usuario en sesión
         this.authSession.saveAuthenticatedUser({
           id: response.id,
           username: response.username,
           email: response.email,
-          role: response.role || 'Participante' // Aquí le pasamos el string directo en singular
+          name: response.name || response.username,
+          role: response.role || 'Participante'
         });
 
+        this.isLoading = false;
         this.router.navigate(['/home']);
       },
       error: (error) => {
         console.error('Error en el login:', error);
+        this.isLoading = false;
 
         if (error.status === 0) {
           this.errorMessage = 'No se pudo conectar con el servidor. ¿Está encendido Django?';
+        } else if (error.status === 401) {
+          this.errorMessage = 'Usuario o contraseña incorrectos.';
         } else {
-          this.errorMessage = error.error?.error || 'Usuario o contraseña incorrectos.';
+          this.errorMessage = error.error?.error || 'Error al iniciar sesión.';
         }
       }
     });
@@ -103,23 +121,32 @@ export class LoginComponent {
   register(): void {
     this.message = '';
     this.errorMessage = '';
+    this.isLoading = true;
 
     if (this.registerForm.invalid) {
       this.errorMessage = 'Por favor completa todos los campos correctamente.';
+      this.isLoading = false;
       return;
     }
 
     const newUser = this.registerForm.value;
 
-    this.http.post('http://localhost:8000/api/register/', newUser).subscribe({
-      next: () => {
+    this.http.post<RegisterResponse>('http://localhost:8000/api/register/', newUser).subscribe({
+      next: (response: RegisterResponse) => {
         this.message = 'Usuario creado correctamente. Ahora puedes iniciar sesión.';
         this.registerForm.reset({ role: 'Participante' });
         this.showRegister = false;
+        this.isLoading = false;
       },
       error: (error) => {
         console.error('Error en el registro:', error);
-        this.errorMessage = error.error?.error || 'Error al registrar el usuario.';
+        this.isLoading = false;
+        
+        if (error.status === 400) {
+          this.errorMessage = error.error?.error || 'Los datos ingresados no son válidos.';
+        } else {
+          this.errorMessage = error.error?.error || 'Error al registrar el usuario.';
+        }
       }
     });
   }
